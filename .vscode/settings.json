@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.h": "objective-cpp",
+        "ratio": "cpp"
+    }
+}
