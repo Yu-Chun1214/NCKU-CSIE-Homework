@@ -3,20 +3,12 @@
 #include<string.h>
 #include<time.h>
 
-//enum bool is enumeration. 
-// the enumerator has two kinds which are true and false.
-enum bool{
-    true = 1,
-    false = 0,
-};
 
 
-// ever number enters from user is an object.
-// Attribute:
+
 struct number{
-    int num;
-    // int position;
-    enum bool match;
+    int num; // record the number
+    int match; // record the number has ever match or not
 };
 
 struct userdata{
@@ -25,7 +17,7 @@ struct userdata{
 };
 
 
-enum bool SetData(struct userdata *data,const char *choice){
+int SetData(struct userdata *data,const char *choice){
     // The function of SetData is to get the input from user.
     //
     // Parameter:
@@ -47,18 +39,18 @@ enum bool SetData(struct userdata *data,const char *choice){
 
     printf("%s",choice);
     scf = scanf("%[^\n]",str_data); // get input data, use %[^\n] to get string with "space"
-    while ((getchar()) != '\n'); // clear the buffer to avoid influence next input
+    while ((getchar()) != '\n'); // clear the buffer to avoid influencing next input
 
     
-    if(scf == false || scf == EOF){ // if input data is illegal to scanf
-        return false;
+    if(scf == 0 || scf == EOF){ // if input data is illegal to scanf
+        return 0;
     }
     else{
         // if input data is legal, the program will split the string based on space
         pch = strtok(str_data," ");
         while(pch!=NULL){
             data->data[i].num = atoi(pch);
-            data->data[i].match = false;
+            data->data[i].match = 0;
             pch = strtok(NULL," ");
             i++;
         }
@@ -67,12 +59,12 @@ enum bool SetData(struct userdata *data,const char *choice){
         // means that how many numbers are split out.
     }
     
-    // if pass all steps ,function will return true finally.
-   return true;
+    // if pass all steps ,function will return 1 finally.
+   return 1;
 }
 
 
-enum bool Check(struct userdata *data,int P,int N){
+int Check(struct userdata *data,int P,int N){
     // function Check is to check if the input from user is legal to this game or not.
     //
     // parameter:
@@ -85,23 +77,23 @@ enum bool Check(struct userdata *data,int P,int N){
     
     int i;
 
-    // check the amount of the numbers is legal or not. If the amount of the input is not equal to N, the function will return false
+    // check the amount of the numbers is legal or not. If the amount of the input is not equal to N, the function will return 0
     if(data->amount != P){
-        printf("amount doesn't match\n");
-        return false;
+        // printf("amount doesn't match\n");
+        return 0;
     }
 
     // check if the input is within the range of N.
-    // if find a number beyond the range function Check will return false.
+    // if find a number beyond the range function Check will return 0.
     for(i = 0; i < data->amount;i++){
         if(data->data[i].num > N || data->data[i].num < 1){
-            printf("%d beyond the range",data->data[i].num);
-            return false;
+            // printf("%d beyond the range",data->data[i].num);
+            return 0;
         }
     }
 
-    // if input pass all check, return true.
-    return true;
+    // if input pass all check, return 1.
+    return 1;
 }
 
 int HX(struct userdata ans,struct userdata *guess,int P){
@@ -114,25 +106,28 @@ int HX(struct userdata ans,struct userdata *guess,int P){
     //          This parameter is a pointer, it point to the original guess which is declared in main function.
     //      int P:
     //          P is input from command line.
+
     int i = 0,j = 0;// iterator
     int h = 0,x = 0;
-    // find H
-    for(i = 0; i < P; i++ ){ // iterator i is for guess
-        for(j = 0;j < P; j++){ // iterator j is for ans
-            if(ans.data[j].match == false){
+
+    // The first step is to find the H. The number and position of number in guess and ans should be the same.
+    // if match,guess->data[i].match and ans.data[j].match will be assigned 1
+    for(i = 0; i < P; i++ ){ 
+        for(j = 0;j < P; j++){ 
+            if(ans.data[j].match == 0){ // this program means that ans.data[j] has not matched
                 if(guess->data[i].num == ans.data[j].num && i == j){
                     h++;
-                    guess->data[i].match = ans.data[j].match = true;
+                    guess->data[i].match = ans.data[j].match = 1;
                 }
             }
         }
     }
     for(i = 0; i < P; i++){
-        if(guess->data[i].match == false){
+        if(guess->data[i].match == 0){
             for(j = 0; j < P; j++){
-                if(ans.data[j].match == false && ans.data[j].num == guess->data[i].num){
+                if(ans.data[j].match == 0 && ans.data[j].num == guess->data[i].num){
                     x++;
-                    ans.data[j].match = true;
+                    ans.data[j].match = 1;
                 }
             }
         }
@@ -154,6 +149,5 @@ int main(int argc, char const *argv[])
     do{
         while(!SetData(&guess,"guess:")||!Check(&guess,P,N));
     }while(P != HX(ans,&guess,P));
-    
     return 0;
 }
