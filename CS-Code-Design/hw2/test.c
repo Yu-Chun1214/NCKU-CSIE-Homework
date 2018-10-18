@@ -65,8 +65,8 @@ int main(int argc, char*argv[])
        }
  
        int H, X;
-       int answer_count[N];
-       int guess_count[N];
+       int answer_count[P][2];
+       int guess_count[P][2];
        int this_number_is, this_number_is2;
  
        H = 0;
@@ -82,24 +82,30 @@ int main(int argc, char*argv[])
         //reset
        for( i = 0 ; i < N ; i++ )
        {
-               answer_count[i] = 0;
+               answer_count[i][0] = 0;
+               answer_count[i][1] = 0;
        }
-       
+       int j = 0;
+       int ans_repeat_count = 1;
        for( i = 0 ; i < P ; ++i )
        {
-               int this_number_is = answer[i];
-               answer_count[ this_number_is - 1] +=1;
+            int this_number_is = answer[i];
+            //    answer_count[ this_number_is - 1] +=1;
+            do{
+
+            }while(j < )
        }
  
-       for( i = 0 ; i < N ; ++i )
+       for( i = 0 ; i < P ; ++i )
        {
-               guess_count[i] = 0;
+               guess_count[i][0] = 0;
+               guess_count[i][1] = 0;
        }
  
        for( i = 0 ; i < P ; ++i )
        {
                int this_number_is2 = guess[i];// 假設guess[i] 是10000 那guess_count[10000-1]會造成記憶體錯誤，上面也是一樣
-               guess_count[ this_number_is2-1 ] += 1;
+            //    guess_count[ this_number_is2-1 ] += 1;
        }
  
        int T;
