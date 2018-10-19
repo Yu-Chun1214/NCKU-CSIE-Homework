@@ -5,7 +5,9 @@
 
 這份測試程式會吃掉你很多網路流量
 請謹慎使用
-.0  
+
+寫完test_x32還是覺得自己好弱
+跟Queensland University的測資 根本天差地遠嗚嗚
 
 """
 
@@ -14,9 +16,12 @@ __author__ = 'Yu-Chun,Lin'
 
 import json
 import threading
+import multiprocessing
 import requests
 import bs4
 import subprocess
+import random
+import os
 from requests_html import HTMLSession
 
 
@@ -32,8 +37,10 @@ Binary_To_float_x32 = 'https://www.h-schmidt.net/FloatConverter/binary-json.py?b
 Decimal_To_double_x64 = 'https://www.exploringbinary.com/floating-point-converter'
 
 session = HTMLSession()
+lock = threading.Lock()
 
-def TestFloat(*,num:int=None,pattern:str=None,NumToString=False)->list:
+def TestFloat(*,num=None,pattern:str=None,NumToString=True,ansDecimal=None,ansBinary=None)->list:
+    # print(num)
     if num is None and pattern is None:
         raise TypeError('Test Float need to input num or bitpattern')
     elif num is not None:
@@ -44,10 +51,12 @@ def TestFloat(*,num:int=None,pattern:str=None,NumToString=False)->list:
     if response.status_code != 200:
         return None
     ans = json.loads(response.text)
-    print(json.dumps(ans,indent=4))
+    # print(json.dumps(ans,indent=4))
+    ansDecimal = ans["highprecision_decimal"]
+    ansBinary = ans["binaryRepr"]
     if NumToString == False:
         return [float(ans["highprecision_decimal"]),ans["binaryRepr"]]
-    else:
+    elif NumToString == True:
         return [ans["highprecision_decimal"],ans["binaryRepr"]]
 
 def BitpatternTest_x32(pattern:str)->list:
@@ -79,5 +88,87 @@ def test(arg1,arg2):
 
 # print(BitpatternTest_x32('00000000000000000000000001100100'))
 
-print(TestFloat(pattern='11100000000000000000000000000000',NumToString=True))
+# print(TestFloat(pattern='11100000000000000000000000000000',NumToString=True))
+# print(TestFloat(num=-6.78,NumToString=False))
 # print('{:032b}'.format(-1))
+
+def TestMode2(num:int(),pattern:str(),fail_test):
+    
+    # print('Mode 2')
+    test_result = subprocess.check_output('./a.out 2 {}'.format(num),shell=True)
+    test_result = test_result.decode('utf-8').rstrip('\n')
+    if test_result == pattern:
+        print('Mode 2 successfully test')
+        pass
+    else:
+        lock.acquire()
+        print('Mode 2 failed test')
+        fail_test.append({
+            'mode': 2,
+            'Test Number':num,
+            'Test Bitpattern' : pattern,
+            'Error Bitpattern' : test_result,
+        })
+        lock.release()
+
+def TestMode3(num:int(),pattern:str(),fail_test):
+    # print('Mode 3')
+    test_result = subprocess.check_output('./a.out 3 {}'.format(num),shell=True)
+    test_result = test_result.decode('utf-8').rstrip('\n')
+    if test_result == pattern:
+        print('Mode 3 successfully test')
+        pass
+    else:
+        print('Mode 3 failed test')
+        fail_test.append({
+            'mode': 3,
+            'Test Number':num,
+            'Test Bitpattern' : pattern,
+            'Error Bitpattern' : test_result,
+        })
+
+def test_x32():
+    i = 0
+    failed_test = []
+    threads=[]
+    while i < 50 :
+        if i % 2 == 0:
+            ans = TestFloat(num=random.randint(-2147483648,2147483647),NumToString=False)
+            # print(TestFloat(num=random.randint(-2147483648,2147483647),NumToString=True))
+            pass
+        else:
+            ans = TestFloat(num=round(random.uniform(-2147483648,2147483647),8),NumToString=False)
+            # print(TestFloat(num=random.uniform(-2147483648,2147483647),NumToString=True))
+            pass
+        # ans = TestFloat(num=random.randint(-2147483648,2147483647),NumToString=True)
+        result_dict = subprocess.check_output('./a.out {} {}'.format(1,ans[1]),shell=True)
+        
+        test_data = json.loads(result_dict.decode('utf-8').rstrip('\n'))
+        test_int = int(test_data["integer"])
+        test_float = float(test_data["float"])
+        if test_float == ans[0]:
+            pass
+        else:
+            failed_test.append({
+                'mode' : 1,
+                'Test Number' : ans[0],
+                'Test Bitpattern' : ans[1],
+                'Error Integer' : test_int,
+                'Error Float' : test_float,
+            })
+            continue
+        threads.append(threading.Thread(target=TestMode2,args=(test_int,ans[1],failed_test)))
+        threads.append(threading.Thread(target=TestMode3,args=(test_float,ans[1],failed_test)))
+        # TestMode2(test_int,ans[1],failed_test)
+        # TestMode3(test_float,ans[1],failed_test)
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        threads = []
+        i += 1
+    return failed_test
+
+if __name__ == '__main__':
+    if len(test_x32()) == 0:
+        print("All successful")

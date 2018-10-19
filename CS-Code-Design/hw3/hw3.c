@@ -34,7 +34,7 @@ int inputBitpattern_int_x32(const char *pattern,int bits){
             sum += ComputeExponent(2,(bits-1-i));
         }
     }
-    printf("integer = %d\n",sum);
+    // printf("integer = %d\n",sum);
     return(sum);
 }
 
@@ -47,12 +47,12 @@ int inputBitpattern_int_x64(const char *pattern,int bits){
             sum += ComputeExponent(2,(bits-1-i));
         }
     }
-    printf("integer = %.0Lf\n",sum);
+    // printf("integer = %.0Lf\n",sum);
     return(sum);
 }
 
 // input bitpattern and output the float number
-void inputBitpattern_float(const char *pattern,int bits){
+long double inputBitpattern_float(const char *pattern,int bits){
     int s = 1;
     int exponent = 0,i;
     long double mentisa = 0;
@@ -63,13 +63,14 @@ void inputBitpattern_float(const char *pattern,int bits){
             exponent += 1<<(exponentbit - i);
         }
     }
-    printf("exponent = %d\n",exponent);
+    // printf("exponent = %d\n",exponent);
     for(i = exponentbit + 1; i < bits; i++){
         if(pattern[i] == '1'){
             mentisa += ComputeExponent(2,exponentbit - i);
         }
     }
-    printf("%Lf\n",(double)s*ComputeExponent(2,(exponent - (bits*28-769)))*(1+mentisa));
+    // printf("%Lf\n",(double)s*ComputeExponent(2,(exponent - (bits*28-769)))*(1+mentisa));
+    return (long double)s*(long double)ComputeExponent(2,(exponent - (bits*28-769)))*(long double)(1+mentisa);
 }
 
 int main(int argc, char *argv[])
@@ -88,9 +89,11 @@ int main(int argc, char *argv[])
         float y;
         double z;
         long long w;
+        long double r;
         case 1 :
-            inputBitpattern_int_x32(argv[2],32);
-            inputBitpattern_float(argv[2],32);
+            x = inputBitpattern_int_x32(argv[2],32);
+            r = inputBitpattern_float(argv[2],32);
+            printf("{\"integer\" : \"%d\",\"float\" : \"%LF\"}\n",x,r);
             break;
         case 2 : 
             x = atoi(argv[2]); 
