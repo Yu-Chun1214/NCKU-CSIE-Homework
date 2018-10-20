@@ -44,14 +44,12 @@ def TestFloat(*,num=None,pattern:str=None,NumToString=True,ansDecimal=None,ansBi
     if num is None and pattern is None:
         raise TypeError('Test Float need to input num or bitpattern')
     elif num is not None:
-        # print(num,pattern)
         response = session.get(Decimal_To_float_x32.format(num))
     elif pattern is not None:
         response = session.get(Binary_To_float_x32.format(pattern))
     if response.status_code != 200:
         return None
     ans = json.loads(response.text)
-    # print(json.dumps(ans,indent=4))
     ansDecimal = ans["highprecision_decimal"]
     ansBinary = ans["binaryRepr"]
     if NumToString == False:
@@ -84,13 +82,6 @@ def TestDouble(num)->list:
 def test(arg1,arg2):
     result = subprocess.check_output('./a.out {} {}'.format(arg1,arg2),shell=True)
     print(result.decode('utf-8').rstrip('\n'))
-# test('1','00000000000000000000000001100100')
-
-# print(BitpatternTest_x32('00000000000000000000000001100100'))
-
-# print(TestFloat(pattern='11100000000000000000000000000000',NumToString=True))
-# print(TestFloat(num=-6.78,NumToString=False))
-# print('{:032b}'.format(-1))
 
 def TestMode2(num:int(),pattern:str(),fail_test):
     
@@ -108,6 +99,23 @@ def TestMode2(num:int(),pattern:str(),fail_test):
             'Test Number':num,
             'Test Bitpattern' : pattern,
             'Error Bitpattern' : test_result,
+        })
+        lock.release()
+
+def TestMode2_2(num:int,pattern:str(),failed_test):
+    test_result = subprocess.check_output('./a.out 2 {}'.format(num),shell=True)
+    test_result = test_result.decode('utf-8').rstrip('\n')
+    ans = TestFloat(pattern=test_result,NumToString=False)
+    if ans[1] == test_result:
+        print('Mode 2 back test successfully')
+    else:
+        lock.acquire()
+        print('Mode 2 back test failed')
+        failed_test.append({
+            'mode' : 2,
+            'Test Number' : num,
+            'Error Bitpattern' : test_result,
+            'Ans Bitpattern' : ans[1],
         })
         lock.release()
 
@@ -131,16 +139,13 @@ def test_x32():
     i = 0
     failed_test = []
     threads=[]
-    while i < 50 :
+    while i < 5 :
         if i % 2 == 0:
             ans = TestFloat(num=random.randint(-2147483648,2147483647),NumToString=False)
-            # print(TestFloat(num=random.randint(-2147483648,2147483647),NumToString=True))
             pass
         else:
             ans = TestFloat(num=round(random.uniform(-2147483648,2147483647),8),NumToString=False)
-            # print(TestFloat(num=random.uniform(-2147483648,2147483647),NumToString=True))
             pass
-        # ans = TestFloat(num=random.randint(-2147483648,2147483647),NumToString=True)
         result_dict = subprocess.check_output('./a.out {} {}'.format(1,ans[1]),shell=True)
         
         test_data = json.loads(result_dict.decode('utf-8').rstrip('\n'))
@@ -159,8 +164,7 @@ def test_x32():
             continue
         threads.append(threading.Thread(target=TestMode2,args=(test_int,ans[1],failed_test)))
         threads.append(threading.Thread(target=TestMode3,args=(test_float,ans[1],failed_test)))
-        # TestMode2(test_int,ans[1],failed_test)
-        # TestMode3(test_float,ans[1],failed_test)
+        threads.append(threading.Thread(target=TestMode2_2,args=(test_float,ans[1],failed_test)))
         for thread in threads:
             thread.start()
         for thread in threads:
@@ -170,5 +174,8 @@ def test_x32():
     return failed_test
 
 if __name__ == '__main__':
-    if len(test_x32()) == 0:
+    result = test_x32()
+    if len(result) == 0:
         print("All successful")
+    else:
+        print(json.dumps(result,indent=4))
