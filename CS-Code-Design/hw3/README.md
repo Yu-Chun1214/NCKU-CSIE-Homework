@@ -7,6 +7,16 @@ ex:
 {"integer":"1234566","float":"123434.234"}
 ```
 
+## Requirements
+
+All in requirements.txt
+
+Please type in command line:
+```
+pip install -r requirements.txt
+```
+
+
 ## Usage
 
 ```
