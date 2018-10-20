@@ -88,6 +88,7 @@ def TestMode2(num,pattern:str(),fail_test):
         lock.acquire()
         print('Mode 2 failed test')
         fail_test.append({
+            'function':'TestMode2',
             'mode': 2,
             'Test Number':num,
             'Test Bitpattern' : pattern,
@@ -105,6 +106,7 @@ def TestMode2_2(num,pattern:str(),failed_test):
         lock.acquire()
         print('Mode 2 back test failed')
         failed_test.append({
+            'function':'TestMode2_2',
             'mode' : 2,
             'Test Number' : num,
             'Error Bitpattern' : test_result,
@@ -122,6 +124,7 @@ def TestMode3(num,pattern:str(),fail_test):
     else:
         print('Mode 3 failed test')
         fail_test.append({
+            'function':'TestMode3',
             'mode': 3,
             'Test Number':num,
             'Test Bitpattern' : pattern,
@@ -144,8 +147,10 @@ def TestItself(Mode1num,mode1_4,mode,failed_test:list(),type:str):
         type:
             select int or float 
     """
+    # print(Mode1num)
     test_result = subprocess.check_output('./a.out {} {}'.format(mode,Mode1num),shell=True)
     test_result = test_result.decode('utf-8').rstrip('\n')
+    # print(test_result)
     result = subprocess.check_output('./a.out {} {}'.format(mode1_4,test_result),shell=True)
     result = result.decode('utf-8').rstrip('\n')
     result = json.loads(result)
@@ -154,11 +159,14 @@ def TestItself(Mode1num,mode1_4,mode,failed_test:list(),type:str):
     else:
         ans = float(result[type])
     if Mode1num == ans:
+        # print("Mode1num = %LF,ans = %LF" % (Mode1num,ans))
         print("Mode {} test itself successfully".format(mode))
+        pass
     else:
         lock.acquire()
         print('Mode {} test itself failed'.format(mode))
         failed_test.append({
+            'function':'Test itself',
             'mode' : mode,
             'Test Number' : Mode1num,
             'Error Bitpattern' : test_result,
@@ -177,6 +185,7 @@ def TestMode(mode,num,pattern:str(),failed_test):
         lock.acquire()
         print('Mode {} failed test'.format(mode))
         failed_test.append({
+            'function':'TestMode',
             'mode': mode,
             'Test Number':num,
             'Test Bitpattern' : pattern,
@@ -204,6 +213,7 @@ def test_x32():
             pass
         else:
             failed_test.append({
+                'function' : 'test_x32',
                 'mode' : 1,
                 'Test Number' : ans[0],
                 'Test Bitpattern' : ans[1],
@@ -231,7 +241,7 @@ def test_x64():
     failed_test = []
     threads = []
     test_datas = []
-    while i < 10:
+    while i < 100:
         
         if i % 2 == 0:
             ans = TestDouble(random.randint(-9223372036854775808,9223372036854775807))
@@ -245,12 +255,15 @@ def test_x64():
         test_float = float(test_data["float"])
         i += 1
         if format(test_float,'.20g') == format(ans[0],'.20g'):
-            print("successful")
-            print(format(test_float,'.20g'),format(ans[0],'.20g'),sep='\n')
+            # print("successful")
+            # print(format(test_float,'.20g'),format(ans[0],'.20g'),sep='\n')
+            # print("ans bitpattern : ",ans[1])
+            # print('test int = %d' %(test_int))
             test_datas.append([ans[1],ans[0]])
             pass
         else:
             failed_test.append({
+                'function':'test_x64',
                 'mode' : 4,
                 'Test Number' : ans[0],
                 'Test Bitpattern' : ans[1],
@@ -280,8 +293,7 @@ def test_x64():
 
 
 def main():
-    failed_test_x32_list = list()
-    failed_test_x64_list = list()
+
     processes = []
     processes.append(multiprocessing.Process(target=test_x32,))
     processes.append(multiprocessing.Process(target=test_x64))
@@ -290,10 +302,8 @@ def main():
     for process in processes:
         process.join()
 
-    print(json.dumps(failed_test_x32_list,indent=4))
-    print('-'*80)
-    print(json.dumps(failed_test_x64_list,indent=4))
 
 if __name__ == '__main__':
     os.system('gcc hw3.c')
     main()
+    # test_x64()
