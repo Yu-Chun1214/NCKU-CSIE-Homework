@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-double ComputeExponent(double n,int exp){
+long double ComputeExponent(double n,int exp){
     int i;
     double num = n;
     if(exp > 0){
@@ -38,9 +38,9 @@ int inputBitpattern_int_x32(const char *pattern,int bits){
     return(sum);
 }
 
-int inputBitpattern_int_x64(const char *pattern,int bits){
+long long inputBitpattern_int_x64(const char *pattern,int bits){
     int s = 1;//positive or negative;
-    long double sum = 0.0;
+    long long sum = 0;
     int i = 0;
     for(int i = 0;i < strlen(pattern); i++){
         if(pattern[i] == '1'){
@@ -104,11 +104,12 @@ int main(int argc, char *argv[])
             OutputBitPattern(&y,32);
             break;
         case 4:
-            inputBitpattern_int_x64(argv[2],64);
-            inputBitpattern_float(argv[2],64);
+            w = inputBitpattern_int_x64(argv[2],64);
+            r = inputBitpattern_float(argv[2],64);
+            printf("{\"integer\" : \"%lld\",\"float\" : \"%.15LF\"}\n",w,r);
             break;
         case 5 : 
-            w = atoi(argv[2]);
+            w = atoll(argv[2]);
             OutputBitPattern(&w,64);
             break;
         case 6 : 
