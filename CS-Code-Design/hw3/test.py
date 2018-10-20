@@ -295,5 +295,5 @@ def main():
     print(json.dumps(failed_test_x64_list,indent=4))
 
 if __name__ == '__main__':
-
+    os.system('gcc hw3.c')
     main()
