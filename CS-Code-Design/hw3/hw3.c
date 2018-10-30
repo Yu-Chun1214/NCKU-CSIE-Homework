@@ -16,12 +16,12 @@ long double ComputeExponent(double n,int exp){ // n是底數 exp是指數
     }
     return num;
 }
-
 // 以long long pointer 來存 位置 是因為這樣32bits 可以用 64bits也可以用
 void OutputBitPattern(long long *x,int bits){
     printf("%d-bit: ",bits);
     long long j = 0;
-    for(int i = bits-1;i >= 0; i--){
+    int i;
+    for(i = bits-1;i >= 0; i--){
         j = 1;
         printf("%d",*x&j<<i?1:0);
     }
@@ -35,7 +35,7 @@ void OutputBitPattern(long long *x,int bits){
 int inputBitpattern_int_x32(const char *pattern,int bits){
     int sum = 0;
     int i = 0;
-    for(int i = 0;i < strlen(pattern); i++){
+    for(i = 0;i < strlen(pattern); i++){
         if(pattern[i] == '1'){
             sum += ComputeExponent(2,(bits-1-i));// bit - 1 - i 是因為最右邊的0是0次方所以要減1，這行是在算2的幾次方
         }
@@ -47,7 +47,7 @@ int inputBitpattern_int_x32(const char *pattern,int bits){
 long long inputBitpattern_int_x64(const char *pattern,int bits){
     long long sum = 0;
     int i = 0;
-    for(int i = 0;i < strlen(pattern); i++){
+    for(i = 0;i < strlen(pattern); i++){
         if(pattern[i] == '1'){
             sum += ComputeExponent(2,(bits-1-i));
         }
@@ -78,6 +78,8 @@ long double inputBitpattern_float(const char *pattern,int bits){
             mentisa += ComputeExponent(2,exponentbit - i);// mentisa 最左邊的值是-1次方 以此類推 因此是exponentbit - i
         }
     }
+    // printf("exponent : %d\n",(exponent - (bits*28-769)));
+    // printf("%LF\n",mentisa);
     // printf("%Lf\n",(double)s*ComputeExponent(2,(exponent - (bits*28-769)))*(1+mentisa));
     // 最後的答案是 s(正負號) * 2 ^ (exponent- 127(or 1023)) * (1 + mentisa) 
     return (long double)s*(long double)ComputeExponent(2,(exponent - (bits*28-769)))*(long double)(1+mentisa);
@@ -97,12 +99,14 @@ int main(int argc, char *argv[])
         double z;
         long long w;
         long double r;
+        float * test;
         case 1 :
             x = inputBitpattern_int_x32(argv[2],32);
-            r = inputBitpattern_float(argv[2],32);
-            // printf("{\"integer\" : \"%d\",\"float\" : \"%LF\"}\n",x,r);
+            test = &x;
+            y = inputBitpattern_float(argv[2],32);
+            // printf("{\"integer\" : \"%d\",\"float\" : \"%f\"}\n",x,y);
             printf("integer: %d\n",x);
-            printf("float: %LF\n",r);
+            printf("float: %f\n",*test);
             break;
         case 2 : 
             x = atoi(argv[2]); 
@@ -115,7 +119,7 @@ int main(int argc, char *argv[])
         case 4:
             w = inputBitpattern_int_x64(argv[2],64);
             r = inputBitpattern_float(argv[2],64);
-            // printf("{\"integer\" : \"%lld\",\"float\" : \"%.15LF\"}\n",w,r);
+            // printf("{\"integer\" : \"%lld\",\"float\" : \"%LF\"}\n",w,r);
             printf("integer: %lld\n",w);
             printf("float: %LF\n",r);
             break;

@@ -304,6 +304,6 @@ def main():
 
 
 if __name__ == '__main__':
-    os.system('gcc hw3.c')
+    os.system('gcc hw4_3.c')
     main()
     # test_x64()

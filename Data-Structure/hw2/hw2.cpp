@@ -31,9 +31,8 @@ private:
     int imove[8];
     int jmove[8];
     int Random();
-
 public:
-// constructor
+    // constructor
     Bug(int Ox,int Oy){
         x = Ox;
         y = Oy;
@@ -50,7 +49,7 @@ public:
     // return value which is private menber
     int XPosition();
     int YPosition();
-    
+    int Steps(){return steps;}
     void Walk(vector<tile *>&square);
 };
 
@@ -58,7 +57,6 @@ class Game{
 private:
     vector<vector<tile> >Tiles;
     int Rows,Cols;
-
 public:
     // constructor
     Game(int m,int n){
@@ -71,7 +69,7 @@ public:
                 tile temp(j,i);
                 row.push_back(temp);
             }
-            Tiles.push_back(row); 
+            Tiles.push_back(row);
         }
     }
     bool IsOver();
@@ -101,7 +99,7 @@ void Game::Play(Bug bug){
         }
         bug.Walk(square);
     }
-    cout<<"Total moves: "<<count<<endl;
+    cout<<"Total moves: "<<bug.Steps()<<endl;
 }
 
 void Game::Print(){
@@ -116,7 +114,7 @@ void Game::Print(){
 bool Game::IsOver(){
     for(int i = 0; i < Tiles.size(); i++){
         for(int j = 0; j < Tiles[i].size(); j++){
-            if(Tiles[i][j].Count() == 0)
+            if(!Tiles[i][j].Count())
                 return false;
         }
     }
@@ -146,6 +144,7 @@ void Bug::Walk(vector<tile *>&square){
                 (*square[i])++;
                 x = movex;
                 y = movey;
+                steps++;
                 return;
             }
         }

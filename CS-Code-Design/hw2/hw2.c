@@ -60,9 +60,10 @@ void HX(int ans[],int P){
         for(int i = 0; i < P; i++){
             if(guess_match[i] != 1){
                 for(int j = 0; j < P; j++){
-                    if(ans[j] == guess[i] && ans_match[j] != 1){
+                    if(ans_match[j] != 1 && ans[j] == guess[i]){
                         ans_match[j] = 1;
                         x++;
+                        break;
                     }
                 }
             }
