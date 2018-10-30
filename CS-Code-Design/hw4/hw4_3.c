@@ -1,7 +1,7 @@
 /************************************************************
  * 學號：E64061151
  * 姓名：林友鈞
- * 編譯方式：gcc -o hw4_3 hw4_3.c
+ * 編譯方式：gcc -std=c99 -o hw4_3 hw4_3.c
  * 執行方式：./hw4_2 mode input
  * 程式功能：transfer bit pattern to number or transfer number to bit pattern
  * 更新日期：2018/10/28
