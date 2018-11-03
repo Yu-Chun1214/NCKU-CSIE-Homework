@@ -29,9 +29,7 @@ public:
 
 bool isNumeric(char * c_string){
     char * charp = c_string;
-    while((*charp && isdigit(*charp)) || *charp == '.' || (*charp) == '-' && *(charp + 1))
-        charp++;
-    return (*charp?false : true);
+    return ((isdigit(*charp) || strlen(c_string) > 1)) ? true : false;
 }
 
 deque<string> InputInstructions(){
@@ -69,21 +67,22 @@ int main(){
     do{
         
         for(deque<string>::iterator dsit = input.begin(); dsit <= input.end() - 2; dsit++){
-            if(!isNumeric((char *)dsit->c_str()) && isNumeric((char *)(dsit + 1)->c_str())){
-                cout<<"in if dsit = "<<*dsit<<endl;
+            if(!isNumeric((char *)dsit->c_str()) && isNumeric((char *)(dsit + 1)->c_str()) && isNumeric((char *)(dsit + 2)->c_str())){
+                // cout<<"in if dsit = "<<*dsit<<endl;
                 *dsit = to_string(performace(*dsit,*(dsit + 1),*(dsit + 2)));
-                cout<<"after to string"<<endl;
+                // cout<<"after to string"<<endl;
                 
-                cout<<*dsit<<" "<<*(dsit+1)<<" "<<*(dsit + 2)<<endl;
+                // cout<<*dsit<<" "<<*(dsit+1)<<" "<<*(dsit + 2)<<endl;
                 input.erase(dsit + 2);
                 input.erase(dsit + 1);
 
-                cout<<"erase end"<<endl;
-                for(deque<string>::iterator dsit = input.begin(); dsit != input.end(); dsit++)
-                    cout<<*dsit<<endl;
-                system("pause");
+                // cout<<"erase end"<<endl;
+                // for(deque<string>::iterator dsit = input.begin(); dsit != input.end(); dsit++)
+                //     cout<<*dsit<<endl;
+                // system("pause");
             }
         }
-        cout<<"out of for"<<endl;
+        // cout<<"out of for"<<endl;
     }while(input.size() != 1);
+    cout<<input[0]<<endl;
 }
