@@ -4,7 +4,7 @@
 using namespace std;
 
 template<class T>
-class deque : public vector<T>{
+class Stack : public vector<T>{
 public:
     T pop_back(){
         if(vector<T>::size() > 0){
@@ -12,19 +12,19 @@ public:
             vector<T>::pop_back();
             return object;
         }
-        else throw "there has no elements in deque object";
+        else throw "there has no elements in Stack object";
     }
-    T pop_front(){
-        if(vector<T>::size() > 0){
-            T object = *(vector<T>::begin());
-            vector<T>::erase(vector<T>::begin());
-            return object;
-        }
-        else throw "there has no elements in deque object";
-    }
-    void push_front(T object){
-        vector<T>::insert(vector<T>::begin(),object);
-    }
+    // T pop_front(){
+    //     if(vector<T>::size() > 0){
+    //         T object = *(vector<T>::begin());
+    //         vector<T>::erase(vector<T>::begin());
+    //         return object;
+    //     }
+    //     else throw "there has no elements in deque object";
+    // }
+    // void push_front(T object){
+    //     vector<T>::insert(vector<T>::begin(),object);
+    // }
 };
 
 bool isNumeric(char * c_string){
@@ -43,27 +43,27 @@ int Precedence(string operatr){
     else if(strcmp(operatr.c_str(),"||") == 0) return 4;
     else return 0;
 }
-class OperatorStack : public deque<string>{
+class OperatorStack : public Stack<string>{
 public:
-    deque<string> OperatorPush(string op){
-        deque<string> return_op;
+    Stack<string> OperatorPush(string op){
+        Stack<string> return_op;
         string temp;
-        for(deque<string>::iterator dit = deque<string>::end() - 1; dit != deque<string>::begin() - 1; dit--){
+        for(Stack<string>::iterator dit = Stack<string>::end() - 1; dit != Stack<string>::begin() - 1; dit--){
             if(Precedence(op) < Precedence(*dit) || Precedence(op) == Precedence(*dit)){
                 temp = *dit;
-                deque<string>::erase(dit);
+                Stack<string>::erase(dit);
                 return_op.push_back(temp);
             }
         }
-        deque<string>::push_back(op);
+        Stack<string>::push_back(op);
         return return_op;
     }
 };
 
-deque<string> InputInstructions(){
+Stack<string> InputInstructions(){
     char *pch;
     char str_data[150];
-    deque<string> instructions;
+    Stack<string> instructions;
     string ptok;
     scanf("%[^\n]",str_data);
     pch = strtok(str_data," ");
@@ -78,10 +78,10 @@ deque<string> InputInstructions(){
 
 int main(int argc, char const * argv[]){ 
     char a[100];
-    deque<string> input = InputInstructions();
+    Stack<string> input = InputInstructions();
     OperatorStack ops;
-    deque<string> op;
-    deque<string> buffer;
+    Stack<string> op;
+    Stack<string> buffer;
     string eos("eos");
     string opern1,opern2;
     for(int i = 0; i < input.size(); i++){
