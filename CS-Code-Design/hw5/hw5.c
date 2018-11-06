@@ -38,8 +38,6 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
         for(j = 1; j <= newMapping[0]; j++){
             if(!map_match[j] && newMapping[j] == original_bucket[i]){
                 map_match[j] = 1;
-                // printf("%d ",Max-j);
-                // successful_match = 1;
                 bucket_index[j] = '1';
                 result += 1<<(Max - j);
                 break;
@@ -57,8 +55,6 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
     }
     for(i = 0; i < count; i++){
         newMapping[newMapping[0] + 1] = no_match[i];
-        // printf("%d ",(Max - newMapping[0] - 1));
-        // result += 1 << (Max - newMapping[0] - 1);
         bucket_index[newMapping[0] + 1] = '1';
         newMapping[0]++;
     }
@@ -79,7 +75,6 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
         bucket_index[i] = (char **)malloc(2*sizeof(char *));
         bucket_index[i][0] = (char *)malloc(5*sizeof(char));
         bucket_index[i][1] = (char *)malloc((Max + 2)*sizeof(char));
-        // sprintf(bucket_index[i][0],"%d",i);
     }
     
     
@@ -87,27 +82,18 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
         for(j = 0; j < newMappingRows; j++){
             if(Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max)){
                 sprintf(bucket_index[i][0],"%d",j);
-                // printf("successful\n");
                 break;
             }
         }
-        // system("pause");
         if(j >= newMappingRows){
             newMappingRows ++;
             newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
             newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
             newMapping[j][0] = 0;
-            // printf("j = %d\n",j);
-            // system("pause");
-            if(Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max))
-                sprintf(bucket_index[i][0],"%d",j);
+            Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max);
+            sprintf(bucket_index[i][0],"%d",j);
         }
-        // printf("%s",bucket_index[i][1]);
-        // printf("-------------\n");
-        // printf("%s | %s\n",bucket_index[i][0],bucket_index[i][1]);
-        // printf("=============\n");
-        // printf("%d | ",newMapping[j][0]);
-        // for(int i = 1;  i <= newMapping[j][0]; i++) printf("%d ",newMapping[j][i]);
+        free(original_bucket[i]);
     }
     for(int i = 0; i < n; i++){
         printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
@@ -175,7 +161,6 @@ int main(int argc, char const *argv[])
         printf("\n");
     }
     bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
-    printf("Max = %d\n",bucketAmountOfNewMapping);
     Compress(bucket,newMapping,n,bucketAmountOfNewMapping);
     return 0;
 }
