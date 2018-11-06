@@ -38,29 +38,37 @@ int Merge(int * original_bucket, int * newMapping, int * bucket_index,int Max,in
             ++count;            
         }
     }
-    printf("\nresult = %d\n",result);
-    printf("count = %d\n",count);
+    
     if(Max - newMapping[0] < count) return 0;
     for(i = 0; i < count; i++){
         newMapping[newMapping[0] + 1] = no_match[i];
+        // printf("%d ",(Max - newMapping[0] - 1));
+        result += 1 << (Max - newMapping[0] - 1);
         newMapping[0]++;
     }
-    for(int i = 0; i <= newMapping[0];i++){
-        printf("%d ",newMapping[i]);
-    }
     // printf("\n");
+    // for(int i = 0; i <= newMapping[0];i++){
+    //     printf("%d ",newMapping[i]);
+    // }
+    // printf("\n");
+    // printf("\nresult = %d\n",result);
+    // printf("count = %d\n",count);
+    
     return 1;
 }
 
 int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
-    int ** bucket_index = (int **)malloc(n*sizeof(int));
+    
     int newMappingRows = 0;
     int successful = 0;
     int count = 0;
     int temp = 0;
-
+    
+    char *** bucket_index = (char ***)malloc(n*sizeof(char **));
     for(int i = 0; i < n; i++){
-        bucket_index[i] = (int *)malloc(2*sizeof(int));
+        bucket_index[i] = (char **)malloc(2*sizeof(char *));
+        bucket_index[i][0] = (char *)malloc(5*sizeof(char));
+        bucket_index[i][1] = (char *)malloc(Max*sizeof(char));
     }
 
     do{
@@ -110,7 +118,7 @@ int main(int argc, char const *argv[])
     }
     bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
     int test1[5] = {3, 1, 5, 4, 4};
-    int test2[7] = {3, 2, 3, 2, 4};
+    int test2[7] = {4, 2, 4, 3, 2, 4};
     Merge(test1,test2,test1,7,3);
     return 0;
 }
