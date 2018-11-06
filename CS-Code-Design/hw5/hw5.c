@@ -15,32 +15,25 @@ void Zeroing(int *array,int size){
 }
 
 int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
-    int map_match[newMapping[0] + 1];
-    int no_match[original_bucket[0]+1];
-    
-    // printf("In Merge\n");
+    int map_match[newMapping[0] + 1]; // record the position element in mapping array , which has been matched;
+    int no_match[original_bucket[0]+1]; // record the value of original_bucket.
+    int count = 0;
+    int i,j;
+
+    /*-------------initialize the arrays--------------*/
     Zeroing(no_match,original_bucket[0] + 1);
     Zeroing(map_match,newMapping[0] + 1);
-    // char * temp = (char *)malloc((Max+1) * sizeof(char));
+    for(int i = 0; i < Max + 1; i++) bucket_index[i] = '0';// initialize the string;
+    bucket_index[Max+1] = '\0'; // set the end of bucket_index, because bucket_index is string type data;
 
-    for(int i = 0; i < Max + 1; i++) bucket_index[i] = '0';
-    bucket_index[Max+1] = '\0'; // set the end of bucket_index
-
-    // printf("%s\n",bucket_index);
-    // exit(0);
-    // int successful_match;
-    int result = 0,count = 0;
-    int i,j;
-   
-    // system("pause");
+    
+    // search begin
     for(i = 1; i <= original_bucket[0]; i++){
-        // successful_match = 0;
         for(j = 1; j <= newMapping[0]; j++){
             if(!map_match[j] && newMapping[j] == original_bucket[i]){
                 map_match[j] = 1;
                 bucket_index[j] = '1';
-                result += 1<<(Max - j);
-                break;
+                break;// avoid original_bucket[i] matching again.
             }
         }
         if(j > newMapping[0]){
@@ -49,10 +42,7 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
         }
    }
     
-    if(Max - newMapping[0] < count){
-        // printf("failed to merge\n");
-        return 0;
-    }
+    if(Max - newMapping[0] < count) return 0; // if remain array isn't 
     for(i = 0; i < count; i++){
         newMapping[newMapping[0] + 1] = no_match[i];
         bucket_index[newMapping[0] + 1] = '1';
@@ -125,34 +115,6 @@ int main(int argc, char const *argv[])
             bucket[i][j] = rand()%d;
         }
     }
-    // {
-    //     bucket[0] = (int *)malloc(5 * sizeof(int));
-    //     bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
-
-    //     bucket[1] = (int *)malloc(5 * sizeof(int));
-    //     bucket[1][0] = 4;bucket[1][1] = 2;bucket[1][2] = 3;bucket[1][3] = 5;bucket[1][4] = 7;
-
-    //     bucket[2] = (int *)malloc(4 * sizeof(int));
-    //     bucket[2][0] = 3;bucket[2][1] = 2;bucket[2][2] = 4;bucket[2][3] = 8;
-
-    //     bucket[3] = (int *)malloc(4 * sizeof(int));
-    //     bucket[3][0] = 3;bucket[3][1] = 2;bucket[3][2] = 3;bucket[3][3] = 8;
-
-    //     bucket[4] = (int *)malloc(3 * sizeof(int));
-    //     bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
-
-    //     bucket[5] = (int *)malloc(3 * sizeof(int));
-    //     bucket[5][0] = 2; bucket[5][1] = 1; bucket[5][2] = 3; 
-
-    //     bucket[6] = (int *)malloc(2 * sizeof(int));
-    //     bucket[6][0] = 1; bucket[6][1] = 2;
-
-    //     bucket[7] = (int *)malloc(4 *sizeof(int));
-    //     bucket[7][0] = 3; bucket[7][1] = 1; bucket[7][2] = 5;bucket[7][3] = 6;
-
-    //     bucket[8] = (int *)malloc(4 *sizeof(int));
-    //     bucket[8][0] = 3; bucket[8][1] = 1; bucket[8][2] = 5; bucket[8][3] = 7;
-    // }
     for(int i = 0; i < n; i++){
         printf("%d | ",bucket[i][0]);
         for(int j = 1;j <= bucket[i][0];j++){
