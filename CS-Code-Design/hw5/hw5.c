@@ -14,13 +14,11 @@ void Zeroing(int *array,int size){
     for(int i = 0; i < size; i++) array[i] = 0;
 }
 
-int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
-    int map_match[newMapping[0] + 1]; // record the position element in mapping array , which has been matched;
-    int no_match[original_bucket[0]+1]; // record the value of original_bucket.
-    int count = 0,match = 0;
-    int i,j;
-
-    /*-------------initialize the arrays--------------*/
+int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,int *newMapping0){
+    int map_match[newMapping[0] + 1];
+    int no_match[original_bucket[0]+1];
+    int count = 0,i,j, result = 0;
+    printf("In Merge\n");
     Zeroing(no_match,original_bucket[0] + 1);
     Zeroing(map_match,newMapping[0] + 1);
     for(int i = 0; i < Max + 1; i++) bucket_index[i] = '0';// initialize the string;
@@ -29,28 +27,35 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max){
     
     // search begin
     for(i = 1; i <= original_bucket[0]; i++){
-        for(j = 1; j <= newMapping[0]; j++){
+        // successful_match = 0;
+        for(j = 1; j <= *newMapping0; j++){
             if(!map_match[j] && newMapping[j] == original_bucket[i]){
                 map_match[j] = 1;
                 bucket_index[j] = '1';
-                ++match;
-                break;// avoid original_bucket[i] matching again.
+                // result += 1<<(Max - j);
+                ++result;
+                break;
             }
         }
-        if(j > newMapping[0]){
+        if(j > *newMapping0){
             no_match[count] = original_bucket[i];
             ++count;          
         }
    }
     
-    if(Max - newMapping[0] < count) return 0; // if remain array isn't 
+    if(Max - *newMapping0 < count){
+        // printf("failed to merge\n");
+        return 0;
+    }
     for(i = 0; i < count; i++){
-        newMapping[newMapping[0] + 1] = no_match[i];
-        bucket_index[newMapping[0] + 1] = '1';
-        newMapping[0]++;
+        newMapping[*newMapping0 + 1] = no_match[i];
+        // printf("%d ",(Max - newMapping[0] - 1));
+        // result += 1 << (Max - newMapping[0] - 1);
+        bucket_index[*newMapping0 + 1] = '1';
+        (*newMapping0)++;
     }
 
-    return match;
+    return result;
 }
 
 int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
@@ -58,9 +63,8 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     int newMappingRows = 0;
     int successful = 0;
     int count = 0;
-    int temp = 0;
-    int max_match;
-    int max_match_row;
+    int temp = 0,max_match,max_match_row;
+    int or_mapping;
     int i,j;
     char *** bucket_index = (char ***)malloc(n*sizeof(char **));
 
@@ -74,21 +78,36 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     for(i = 0; i < n; i++){
         max_match = 0;
         for(j = 0; j < newMappingRows; j++){
-            temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max);
-            max_match = (temp > max_match) ? max_match_row = j,temp : max_match;
+            // if(Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max)){
+            //     sprintf(bucket_index[i][0],"%d",j);
+            //     // printf("successful\n");
+            //     break;
+            // }
+            or_mapping = newMapping[j][0];
+            temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
+            max_match = (temp > max_match) ? max_match_row = j,temp : max_match; 
         }
+        system("pause");
         if(!max_match){
             newMappingRows ++;
             newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
             newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
             newMapping[j][0] = 0;
-            Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max);
+            printf("j = %d\n",j);
+            system("pause");
+            Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&newMapping[j][0]);
             sprintf(bucket_index[i][0],"%d",j);
         }else{
-            Merge(original_bucket[i],newMapping[max_match_row],bucket_index[i][1],Max);
+            Merge(original_bucket[i],newMapping[max_match_row],bucket_index[i][1],Max,&newMapping[max_match_row][0]);
             sprintf(bucket_index[i][0],"%d",max_match_row);
         }
-        free(original_bucket[i]);
+
+        // printf("%s\n",bucket_index[i][1]);
+        // printf("-------------\n");
+        // printf("%s | %s\n",bucket_index[i][0],bucket_index[i][1]);
+        // printf("=============\n");
+        // printf("%d | ",newMapping[j][0]);
+        // for(int i = 1;  i <= newMapping[j][0]; i++) printf("%d ",newMapping[j][i]);
     }
     for(int i = 0; i < n; i++){
         printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
@@ -120,6 +139,7 @@ int main(int argc, char const *argv[])
     //         bucket[i][j] = rand()%d;
     //     }
     // }
+
     {
         bucket[0] = (int *)malloc(5 * sizeof(int));
         bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
@@ -155,6 +175,7 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }
+    system("pause");
     bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
     Compress(bucket,newMapping,n,bucketAmountOfNewMapping);
     return 0;
