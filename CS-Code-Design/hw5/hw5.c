@@ -87,14 +87,14 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
             temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
             max_match = (temp > max_match) ? max_match_row = j,temp : max_match; 
         }
-        system("pause");
+        // system("pause");
         if(!max_match){
             newMappingRows ++;
             newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
             newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
             newMapping[j][0] = 0;
             printf("j = %d\n",j);
-            system("pause");
+            // system("pause");
             Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&newMapping[j][0]);
             sprintf(bucket_index[i][0],"%d",j);
         }else{
@@ -142,16 +142,16 @@ int main(int argc, char const *argv[])
 
     {
         bucket[0] = (int *)malloc(5 * sizeof(int));
-        bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
+        bucket[0][0] = 3;bucket[0][1] = 2;bucket[0][2] = 3;bucket[0][3] = 5;bucket[0][4] = 7;
 
         bucket[1] = (int *)malloc(5 * sizeof(int));
-        bucket[1][0] = 4;bucket[1][1] = 2;bucket[1][2] = 3;bucket[1][3] = 5;bucket[1][4] = 7;
+        bucket[1][0] = 4;bucket[1][1] = 1;bucket[1][2] = 3;bucket[1][3] = 7;bucket[1][4] = 9;
 
         bucket[2] = (int *)malloc(4 * sizeof(int));
-        bucket[2][0] = 3;bucket[2][1] = 2;bucket[2][2] = 4;bucket[2][3] = 8;
+        bucket[2][0] = 2;bucket[2][1] = 3;bucket[2][2] = 1;bucket[2][3] = 8;
 
-        bucket[3] = (int *)malloc(4 * sizeof(int));
-        bucket[3][0] = 3;bucket[3][1] = 2;bucket[3][2] = 3;bucket[3][3] = 8;
+        bucket[3] = (int *)malloc(6 * sizeof(int));
+        bucket[3][0] = 5;bucket[3][1] = 1;bucket[3][2] = 2;bucket[3][3] = 3; bucket[3][4] = 4; bucket[3][5] = 5;
 
         bucket[4] = (int *)malloc(3 * sizeof(int));
         bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
@@ -175,7 +175,7 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }
-    system("pause");
+    // system("pause");
     bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
     Compress(bucket,newMapping,n,bucketAmountOfNewMapping);
     return 0;
