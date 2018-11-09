@@ -76,7 +76,7 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
         }
         if(!max_match){
             newMappingRows ++;
-            newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
+            //newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
             newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
             newMapping[j][0] = 0;
             printf("j = %d\n",j);
@@ -104,7 +104,7 @@ int main(int argc, char const *argv[])
 {
     int n = atoi(argv[1]),m = atoi(argv[2]),d = atoi(argv[3]), s = atoi(argv[4]);
     srand(s);
-    int amounts_of_elements = (rand() % m) + 1;
+    int amounts_of_elements;
     int **bucket = (int **)malloc(n*sizeof(int *));
     int ** newMapping;
     int bucketAmountOfNewMapping;
@@ -153,7 +153,11 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }
-    bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
+    // bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
     Compress(bucket,newMapping,n,bucketAmountOfNewMapping);
     return 0;
+}
+
+int bucket_union(int a[][2],int i){
+    return a[i][0];
 }

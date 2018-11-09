@@ -22,6 +22,7 @@ public:
 class HeaderNode:public Node{
 private:
     virtual void virtualfunction();
+    
 };
 
 class matrixNode;
@@ -33,7 +34,7 @@ private:
 };
 
 int main(){
-    matrixPointer test;
+    NodePointer test;
     test = new HeaderNode();
     HeaderNode * test2;
     // printf("teacher you are beautiful,please give me grades!")
