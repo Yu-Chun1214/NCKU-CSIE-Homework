@@ -2,40 +2,29 @@
 
 using namespace std;
 
-
-class entryNode{
-public:
-    int row,col,value;
-    entryNode(){row = col = value = 0;}
-};
-
 class Node;
 typedef Node * NodePointer;
 class Node{
-public:
-    NodePointer down;
-    NodePointer right;
-    NodePointer next;
-    virtual void virtualfunction()=0;
-};
-
-class HeaderNode:public Node{
 private:
-    virtual void virtualfunction();
+    int row,col,value;
     
+public:
+    Node(int r,int c, int val){row = r,col = c, value = val; Next = Down = Right = this;}
+    Node(){row = col = value = 0; Next = Down = Right = this;}
+    int Row(){return row;}
+    int Col(){return col;}
+    int Value(){return value;}
+    // NodePointer Down(){return down;};
+    // NodePointer Right(){return right;}
+    // NodePointer Down(NodePointer newdown){down = newdown; return down;}
+    // NodePointer Right(NodePointer newright){right = newright; return right;}
+    NodePointer Down;
+    NodePointer Right;
+    NodePointer Next;
+    NodePointer ItSelf(){return this;}
 };
 
-class matrixNode;
-typedef matrixNode * matrixPointer;
-class matrixNode : public HeaderNode{
-private:
-    virtual void virtualfunction();
-    matrixPointer ItSelf(){return this;}
-};
 
 int main(){
-    NodePointer test;
-    test = new HeaderNode();
-    HeaderNode * test2;
-    // printf("teacher you are beautiful,please give me grades!")
+
 }
