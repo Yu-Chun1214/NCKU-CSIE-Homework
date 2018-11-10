@@ -24,21 +24,14 @@ class Mat{
 private:
     NodePointer hdnode;
     NodePointer FIRST_NODE;
-    void Insertion(NodePointer item,NodePointer hd_begin,NodePointer hd_end,int n,NodePointer (*Compare)(NodePointer,NodePointer));
-    NodePointer Compare_row(NodePointer node1,NodePointer node2);
-    
 public:
     Mat(int rows,int cols,int num){mread(rows,cols,num);}
-
+    Mat(){}
     NodePointer mread(int rows,int cols,int num);
+    Mat operator * (Mat);
+    Mat Transpose();
     void mwrite();
 };
-
-NodePointer Mat::Compare_row(NodePointer node1,NodePointer node2){
-    NodePointer temp = node1->Right;
-    node1->Right = (node1->Right->Row() < node2 ->Row() ? node1->Right : (node2->Right = temp),node2); // if node2-Row() > last1-Row(), swap 
-    return node1;
-}
 
 NodePointer Mat::mread(int rows,int cols,int num){
     const int HEADER_NODE_AMOUNT = rows >= cols ? rows : cols;
@@ -71,6 +64,7 @@ NodePointer Mat::mread(int rows,int cols,int num){
         current_element_col[col] = temp;
     }
     
+    // close row and col
     for(int i = 0; i < HEADER_NODE_AMOUNT; i++){
         current_element_col[i]->Down = &hdnode[i];
         current_element_row[i]->Right = &hdnode[i];
@@ -80,15 +74,6 @@ NodePointer Mat::mread(int rows,int cols,int num){
     delete[] current_element_row;
     
     return FIRST_NODE;
-}
-
-void Mat::Insertion(NodePointer item,NodePointer begin,NodePointer end, int n, NodePointer (*Compare)(NodePointer,NodePointer)){
-    // NodePointer temp = begin;
-    while(begin != end){
-        if(begin != Compare(begin,item)){//meas that item is bigger than item
-            
-        }
-    }
 }
 
 void Mat::mwrite(){
@@ -104,6 +89,24 @@ void Mat::mwrite(){
         }
         current_hd = O->Next;
     }
+}
+
+Mat Mat::Transpose(){
+    NodePointer hdpointer = FIRST_NODE->Next; // Initially, hdpointer points to the first headernode;
+    Mat newMat;
+    newMat.FIRST_NODE = new Node(FIRST_NODE->Col(), FIRST_NODE->Row(), FIRST_NODE->Value());
+    // NodePointer NewMat  = new Node(FIRST_NODE->Col(), FIRST_NODE->Row(), FIRST_NODE->Value());// Initially set the first node of NewMat;
+    NodePointer elementptr;
+    while(hdpointer != FIRST_NODE){
+        elementptr = hdpointer->Down;
+        while(elementptr != hdpointer){
+
+        }
+    }
+}
+
+Mat Mat::operator*(Mat mat2){
+    return *this;
 }
 
 int main(){
