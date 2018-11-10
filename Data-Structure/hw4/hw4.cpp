@@ -1,7 +1,6 @@
 #include<iostream>
-
+#include<vector>
 using namespace std;
-
 
 class Node;
 typedef Node * NodePointer;
@@ -25,7 +24,8 @@ private:
     NodePointer hdnode;
     NodePointer FIRST_NODE;
     int mread_initialize(int rows,int cols, int num,NodePointer * &current_row,NodePointer * &current_col);
-    void mread_addNode(int row,int col,int value,NodePointer * &current_row,NodePointer * &current_col);
+    void mread_addNode(NodePointer item,NodePointer * &current_row, NodePointer * &current_col);
+    void mread_final(NodePointer * &current_row,NodePointer * &current_col,const int HEADER_NODE_AMOUNT);
 public:
     Mat(int rows,int cols,int num){mread(rows,cols,num);}
     Mat(){}
@@ -54,32 +54,36 @@ int Mat::mread_initialize(int rows,int cols, int num,NodePointer * &current_row,
     return HEADER_NODE_AMOUNT;
 }
 
-void Mat::mread_addNode(int row,int col,int value,NodePointer * &current_row,NodePointer * &current_col){
-    NodePointer item = new Node(row,col,value);
-    current_row[row]->Right = item;
-    current_col[col]->Down = item;
-    current_row[row] = item;
-    current_col[col] = item;
+void Mat::mread_addNode(NodePointer item, NodePointer * &current_row,NodePointer * & current_col){
+    current_row[item->Row()]->Right = item;
+    current_col[item->Col()]->Down = item;
+    current_row[item->Row()] = item;
+    current_col[item->Col()] = item;
+}
+
+void Mat::mread_final(NodePointer * &current_row,NodePointer * &current_col, const int HEADER_NODE_AMOUNT){
+    for(int i = 0; i < HEADER_NODE_AMOUNT; i++){
+        current_col[i]->Down = &hdnode[i];
+        current_row[i]->Right = &hdnode[i];
+    }
 }
 
 NodePointer Mat::mread(int rows,int cols,int num){
     
     int row,col,value;
     NodePointer * current_element_row , * current_element_col;
+    NodePointer  temp;
 
     const int HEADER_NODE_AMOUNT = mread_initialize(rows,cols,num,current_element_row,current_element_col);
 
     // Add "num" nodes;
     for(int i = 0; i < num; i++){
         cin>>row>>col>>value;
-        mread_addNode(row,col,value,current_element_row,current_element_col);
+        temp = new Node(row,col,value);
+        mread_addNode(temp,current_element_row,current_element_col);
     }
     
-    // close row and col
-    for(int i = 0; i < HEADER_NODE_AMOUNT; i++){
-        current_element_col[i]->Down = &hdnode[i];
-        current_element_row[i]->Right = &hdnode[i];
-    }
+    mread_final(current_element_row,current_element_col,HEADER_NODE_AMOUNT);
 
     delete[] current_element_col;
     delete[] current_element_row;
@@ -103,25 +107,77 @@ void Mat::mwrite(){
 }
 
 Mat Mat::Transpose(){
-    NodePointer hdpointer = FIRST_NODE->Next; // Initially, hdpointer points to the first headernode;
     Mat newMat;
-    newMat.FIRST_NODE = new Node(FIRST_NODE->Col(), FIRST_NODE->Row(), FIRST_NODE->Value());
-    // NodePointer NewMat  = new Node(FIRST_NODE->Col(), FIRST_NODE->Row(), FIRST_NODE->Value());// Initially set the first node of NewMat;
+    NodePointer * current_row, * current_col;
+    const int HEADER_NODE_AMOUNT = newMat.mread_initialize(FIRST_NODE->Col(),FIRST_NODE->Row(),FIRST_NODE->Value(),current_row,current_col);
+
+    NodePointer hdpointer = FIRST_NODE->Right; // Initially, hdpointer points to the first headernode;
     NodePointer elementptr;
     while(hdpointer != FIRST_NODE){
         elementptr = hdpointer->Down;
         while(elementptr != hdpointer){
-
+            newMat.mread_addNode(elementptr->Col(),elementptr->Row(),elementptr->Value(),current_row,current_col);
+            elementptr = elementptr->Down;
         }
+        hdpointer = hdpointer->Next;
     }
+    newMat.mread_final(current_row,current_col,HEADER_NODE_AMOUNT);
+    return newMat;
 }
 
 Mat Mat::operator*(Mat mat2){
-    return *this;
-}
+    if(FIRST_NODE->Col() != mat2.FIRST_NODE->Row()) throw ("Matrix Should be the same size");
+    Mat resultMat;
+    vector<NodePointer> nodes;
+    NodePointer mat1_element_ptr,mat2_element_ptr;
+    NodePointer hdptr1 = FIRST_NODE->Right;
+    NodePointer hdptr2 = mat2.FIRST_NODE->Right;
+    NodePointer temp;
+    NodePointer * current_element_row, * current_element_col;
+    int sum,row,col;
+
+    if(hdptr1->Next == FIRST_NODE){
+        throw ("Link error");
+    }
+    while(hdptr1 != FIRST_NODE){
+        for(hdptr2 = mat2.FIRST_NODE->Right;hdptr2 != mat2.FIRST_NODE;hdptr2 = hdptr2->Next){
+            sum = 0;
+            mat1_element_ptr = hdptr1->Right;
+            mat2_element_ptr = hdptr2->Down;
+            row = mat1_element_ptr->Row();
+            col = mat2_element_ptr->Col();
+            while(mat1_element_ptr != hdptr1 && mat2_element_ptr != hdptr2){
+                // cout<<mat1_element_ptr->Value()<<"   "<<mat2_element_ptr->Value()<<endl;
+                if(mat1_element_ptr->Col() == mat2_element_ptr->Row()){
+                    sum += mat1_element_ptr->Value() * mat2_element_ptr->Value();
+                    mat1_element_ptr = mat1_element_ptr->Right;
+                    mat2_element_ptr = mat2_element_ptr->Down;
+                }
+                else if(mat1_element_ptr->Col() < mat2_element_ptr->Row()) mat1_element_ptr = mat1_element_ptr->Right;
+                else  mat2_element_ptr = mat2_element_ptr->Down;
+            }
+            if(sum){
+                temp = new Node(row,col,sum);
+                nodes.push_back(temp);
+            }
+        }
+        hdptr1 = hdptr1->Next;
+    }
+    const int HEADER_NODE_AMOUNT = resultMat.mread_initialize(FIRST_NODE->Row(),mat2.FIRST_NODE->Col(),nodes.size(),current_element_row,current_element_col);
+    for(int i = 0; i < nodes.size(); i++) resultMat.mread_addNode(nodes[i],current_element_row,current_element_col);
+    resultMat.mread_final(current_element_row,current_element_col,HEADER_NODE_AMOUNT);
+    delete[] current_element_col;
+    delete[] current_element_row;
+    return resultMat;
+} 
 
 int main(){
-    Mat mat(3,4,4);
-    cout<<"===================\n";
-    mat.mwrite();
+    Mat mat(3,4,3);
+    // cout<<"===================\n";
+    // mat.mwrite();
+    Mat mat2(2,4,4);
+    // cout<<"====================\n";
+    mat2.Transpose().mwrite();
+    cout<<"====================\n";
+    (mat*mat2.Transpose()).mwrite();
 }
