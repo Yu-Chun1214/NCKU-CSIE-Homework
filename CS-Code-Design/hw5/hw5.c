@@ -46,6 +46,7 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,i
         newMapping[*newMapping0 + 1] = no_match[i];
         bucket_index[*newMapping0 + 1] = '1';
         (*newMapping0)++;
+        result ++;
     }
 
     return result;
