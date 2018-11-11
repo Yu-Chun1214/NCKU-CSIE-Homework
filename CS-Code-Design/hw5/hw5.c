@@ -184,11 +184,7 @@ int main(int argc, char const *argv[])
         }
         printf("\n");
     }
-<<<<<<< HEAD
-    //bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
-=======
     bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
->>>>>>> f2b7bf0
     Compress(bucket,newMapping,n,m);
     return 0;
 }
