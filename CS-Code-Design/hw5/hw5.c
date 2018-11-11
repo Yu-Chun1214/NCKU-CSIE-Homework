@@ -84,9 +84,9 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     
     for(i = 0; i < n; i++){
         max_match = EOF;
-        for(int k = 1; k <= original_bucket[i][0]; k++)
-            printf("%5d",original_bucket[i][k]);
-        printf("\n");
+        // for(int k = 1; k <= original_bucket[i][0]; k++)
+        //     printf("%5d",original_bucket[i][k]);
+        // printf("\n");
         // for(j = 0; j < newMappingRows; j++){
         //     or_mapping = newMapping[j][0];
         //     temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
@@ -94,14 +94,14 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
         // }
         max_match = bucket_union(newMappingRows,original_bucket[i],newMapping,bucket_index[i],Max);
         // printf("max_match_row = %d\n",max_match_row);
-        printf("max_match = %d\n",max_match);
-        system("pause");
+        // printf("max_match = %d\n",max_match);
+        // system("pause");
         if(max_match == EOF){
             
-            newMapping = realloc(newMapping,(newMappingRows  + 1)*sizeof(int **));
+            // newMapping = realloc(newMapping,(newMappingRows  + 1)*sizeof(int **));
             newMapping[newMappingRows] = (int *)malloc((Max + 1) * sizeof(int));
             newMapping[newMappingRows][0] = 0;
-            printf("newMappingRows = %d\n",newMappingRows);
+            // printf("newMappingRows = %d\n",newMappingRows);
             Merge(original_bucket[i],newMapping[newMappingRows],bucket_index[i][1],Max,&newMapping[newMappingRows][0]);
             sprintf(bucket_index[i][0],"%d",newMappingRows);
             newMappingRows ++;
@@ -110,13 +110,13 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
             Merge(original_bucket[i],newMapping[max_match_row],bucket_index[i][1],Max,&newMapping[max_match_row][0]);
             sprintf(bucket_index[i][0],"%d",max_match_row);
         }
-        for(int k = 0; k < newMappingRows; k++){
-            printf("%d | ",newMapping[k][0]);
-            for(int l = 1; l <= newMapping[k][0]; l++)
-                printf("%5d",newMapping[k][l]);
-            printf("\n");
-        }
-        system("pause");
+        // for(int k = 0; k < newMappingRows; k++){
+        //     printf("%d | ",newMapping[k][0]);
+        //     for(int l = 1; l <= newMapping[k][0]; l++)
+        //         printf("%5d",newMapping[k][l]);
+        //     printf("\n");
+        // }
+        // system("pause");
     }
     for(int i = 0; i < n; i++){
         printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
@@ -151,16 +151,16 @@ int main(int argc, char const *argv[])
 
     // {
     //     bucket[0] = (int *)malloc(5 * sizeof(int));
-    //     bucket[0][0] = 3;bucket[0][1] = 2;bucket[0][2] = 3;bucket[0][3] = 5;bucket[0][4] = 7;
+    //     bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
 
     //     bucket[1] = (int *)malloc(5 * sizeof(int));
-    //     bucket[1][0] = 4;bucket[1][1] = 1;bucket[1][2] = 3;bucket[1][3] = 7;bucket[1][4] = 9;
+    //     bucket[1][0] = 4;bucket[1][1] = 2;bucket[1][2] = 3;bucket[1][3] = 5;bucket[1][4] = 7;
 
     //     bucket[2] = (int *)malloc(4 * sizeof(int));
-    //     bucket[2][0] = 2;bucket[2][1] = 3;bucket[2][2] = 1;bucket[2][3] = 8;
+    //     bucket[2][0] = 3;bucket[2][1] = 2;bucket[2][2] = 4;bucket[2][3] = 8;
 
     //     bucket[3] = (int *)malloc(6 * sizeof(int));
-    //     bucket[3][0] = 5;bucket[3][1] = 1;bucket[3][2] = 2;bucket[3][3] = 3; bucket[3][4] = 4; bucket[3][5] = 5;
+    //     bucket[3][0] = 3;bucket[3][1] = 2;bucket[3][2] = 3;bucket[3][3] = 8; bucket[3][4] = 4; bucket[3][5] = 5;
 
     //     bucket[4] = (int *)malloc(3 * sizeof(int));
     //     bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
