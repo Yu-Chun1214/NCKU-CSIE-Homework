@@ -51,18 +51,6 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,i
     return result;
 }
 
-int bucket_union(int newMappingRows,int* original_bucket,int ** newMapping,char *** bucket_index,int Max){
-    int original_match;
-    int temp;
-    int Max_match = 0,Max_match_row = 0;
-    for(int i = 0; i < newMappingRows; i++){
-        original_match = newMapping[i][0];
-        temp = Merge(original_bucket,newMapping[i],bucket_index[i][1],Max,&original_match);
-        Max_match = (temp > Max_match) ? Max_match_row = i, temp : Max_match;
-    }
-    return (Max_match ? Max_match_row : 0);
-}
-
 int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     
     int newMappingRows = 0;
@@ -72,7 +60,7 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     int or_mapping;
     int i,j;
     char *** bucket_index = (char ***)malloc(n*sizeof(char **));
-	newMapping = malloc(102*sizeof(int **));
+	newMapping = malloc(100*sizeof(int **));
     for(int i = 0; i < n; i++){
         bucket_index[i] = (char **)malloc(2*sizeof(char *));
         bucket_index[i][0] = (char *)malloc(5*sizeof(char));
@@ -81,18 +69,19 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     
     for(i = 0; i < n; i++){
         max_match = 0;
-        // for(j = 0; j < newMappingRows; j++){
-        //     or_mapping = newMapping[j][0];
-        //     temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
-        //     max_match = (temp > max_match) ? max_match_row = j,temp : max_match; 
-        // }
-        max_match_row = bucket_union(newMappingRows,original_bucket[i],newMapping,bucket_index,Max);
-        if(!max_match_row){
-            newMapping[newMappingRows] = (int *)malloc((Max + 1) * sizeof(int));
-            newMapping[newMappingRows][0] = 0;
-            Merge(original_bucket[i],newMapping[newMappingRows],bucket_index[i][1],Max,&newMapping[newMappingRows][0]);
-            sprintf(bucket_index[i][0],"%d",newMappingRows);
+        for(j = 0; j < newMappingRows; j++){
+            or_mapping = newMapping[j][0];
+            temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
+            max_match = (temp > max_match) ? max_match_row = j,temp : max_match; 
+        }
+        if(!max_match){
             newMappingRows ++;
+            //newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
+            newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
+            newMapping[j][0] = 0;
+            printf("j = %d\n",j);
+            Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&newMapping[j][0]);
+            sprintf(bucket_index[i][0],"%d",j);
         }else{
             Merge(original_bucket[i],newMapping[max_match_row],bucket_index[i][1],Max,&newMapping[max_match_row][0]);
             sprintf(bucket_index[i][0],"%d",max_match_row);

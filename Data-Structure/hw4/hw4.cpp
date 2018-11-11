@@ -109,6 +109,7 @@ void Mat::mwrite(){
 Mat Mat::Transpose(){
     Mat newMat;
     NodePointer * current_row, * current_col;
+    NodePointer  temp;
     const int HEADER_NODE_AMOUNT = newMat.mread_initialize(FIRST_NODE->Col(),FIRST_NODE->Row(),FIRST_NODE->Value(),current_row,current_col);
 
     NodePointer hdpointer = FIRST_NODE->Right; // Initially, hdpointer points to the first headernode;
@@ -116,7 +117,8 @@ Mat Mat::Transpose(){
     while(hdpointer != FIRST_NODE){
         elementptr = hdpointer->Down;
         while(elementptr != hdpointer){
-            newMat.mread_addNode(elementptr->Col(),elementptr->Row(),elementptr->Value(),current_row,current_col);
+            temp = new Node(elementptr->Col(),elementptr->Row(),elementptr->Value());
+            newMat.mread_addNode(temp,current_row,current_col);
             elementptr = elementptr->Down;
         }
         hdpointer = hdpointer->Next;
