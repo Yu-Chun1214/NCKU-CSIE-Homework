@@ -31,7 +31,7 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,i
             if(!map_match[j] && newMapping[j] == original_bucket[i]){
                 map_match[j] = 1;
                 bucket_index[j] = '1';
-                ++result;
+                result += 2;
                 break;
             }
         }
@@ -140,44 +140,44 @@ int main(int argc, char const *argv[])
     int **bucket = (int **)malloc(n*sizeof(int *));
     int ** newMapping;
     int bucketAmountOfNewMapping;
-    for(int i = 0; i < n; i++){
-        amounts_of_elements = (rand() % m) + 1;
-        // printf("amounts of elements = %d\n",amounts_of_elements);
-        bucket[i] = (int *)malloc((amounts_of_elements + 1)*sizeof(int)); // malloc amount_of_element + 1 '1' is for first element
-        bucket[i][0] = amounts_of_elements;
-        for(int j = 1; j <= bucket[i][0]; j++){
-            bucket[i][j] = rand()%d;
-        }
-    }
-
-    // {
-    //     bucket[0] = (int *)malloc(5 * sizeof(int));
-    //     bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
-
-    //     bucket[1] = (int *)malloc(5 * sizeof(int));
-    //     bucket[1][0] = 4;bucket[1][1] = 2;bucket[1][2] = 3;bucket[1][3] = 5;bucket[1][4] = 7;
-
-    //     bucket[2] = (int *)malloc(4 * sizeof(int));
-    //     bucket[2][0] = 3;bucket[2][1] = 2;bucket[2][2] = 4;bucket[2][3] = 8;
-
-    //     bucket[3] = (int *)malloc(6 * sizeof(int));
-    //     bucket[3][0] = 3;bucket[3][1] = 2;bucket[3][2] = 3;bucket[3][3] = 8; bucket[3][4] = 4; bucket[3][5] = 5;
-
-    //     bucket[4] = (int *)malloc(3 * sizeof(int));
-    //     bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
-
-    //     bucket[5] = (int *)malloc(3 * sizeof(int));
-    //     bucket[5][0] = 2; bucket[5][1] = 1; bucket[5][2] = 3; 
-
-    //     bucket[6] = (int *)malloc(2 * sizeof(int));
-    //     bucket[6][0] = 1; bucket[6][1] = 2;
-
-    //     bucket[7] = (int *)malloc(4 *sizeof(int));
-    //     bucket[7][0] = 3; bucket[7][1] = 1; bucket[7][2] = 5;bucket[7][3] = 6;
-
-    //     bucket[8] = (int *)malloc(4 *sizeof(int));
-    //     bucket[8][0] = 3; bucket[8][1] = 1; bucket[8][2] = 5; bucket[8][3] = 7;
+    // for(int i = 0; i < n; i++){
+    //     amounts_of_elements = (rand() % m) + 1;
+    //     // printf("amounts of elements = %d\n",amounts_of_elements);
+    //     bucket[i] = (int *)malloc((amounts_of_elements + 1)*sizeof(int)); // malloc amount_of_element + 1 '1' is for first element
+    //     bucket[i][0] = amounts_of_elements;
+    //     for(int j = 1; j <= bucket[i][0]; j++){
+    //         bucket[i][j] = rand()%d;
+    //     }
     // }
+
+    {
+        bucket[0] = (int *)malloc(5 * sizeof(int));
+        bucket[0][0] = 4;bucket[0][1] = 1;bucket[0][2] = 2;bucket[0][3] = 5;bucket[0][4] = 7;
+
+        bucket[1] = (int *)malloc(5 * sizeof(int));
+        bucket[1][0] = 4;bucket[1][1] = 2;bucket[1][2] = 3;bucket[1][3] = 5;bucket[1][4] = 7;
+
+        bucket[2] = (int *)malloc(4 * sizeof(int));
+        bucket[2][0] = 3;bucket[2][1] = 2;bucket[2][2] = 4;bucket[2][3] = 8;
+
+        bucket[3] = (int *)malloc(6 * sizeof(int));
+        bucket[3][0] = 3;bucket[3][1] = 2;bucket[3][2] = 3;bucket[3][3] = 8; bucket[3][4] = 4; bucket[3][5] = 5;
+
+        bucket[4] = (int *)malloc(3 * sizeof(int));
+        bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
+
+        bucket[5] = (int *)malloc(3 * sizeof(int));
+        bucket[5][0] = 2; bucket[5][1] = 1; bucket[5][2] = 3; 
+
+        bucket[6] = (int *)malloc(2 * sizeof(int));
+        bucket[6][0] = 1; bucket[6][1] = 2;
+
+        bucket[7] = (int *)malloc(4 *sizeof(int));
+        bucket[7][0] = 3; bucket[7][1] = 1; bucket[7][2] = 5;bucket[7][3] = 6;
+
+        bucket[8] = (int *)malloc(4 *sizeof(int));
+        bucket[8][0] = 3; bucket[8][1] = 1; bucket[8][2] = 5; bucket[8][3] = 7;
+    }
     for(int i = 0; i < n; i++){
         printf("%d | ",bucket[i][0]);
         for(int j = 1;j <= bucket[i][0];j++){
