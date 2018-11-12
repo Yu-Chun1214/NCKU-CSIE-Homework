@@ -2,6 +2,8 @@
 #include<stdlib.h>
 #define EOB -1
 
+void fprint_result(int newMappingRow,int **newMapping,char *** bucket_index,int **original_bucket,int n);
+
 int MaxAmountOfElementInBucket(int **original_bucket, int n){
     int Max = 0;
     for(int i = 0; i < n; i++){
@@ -99,17 +101,43 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
             sprintf(bucket_index[i][0],"%d",max_match_row);
         }
     }
-    for(int i = 0; i < n; i++){
-        printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
-    }
-    for(int i = 0; i < newMappingRows; i++){
-        printf("%d | ",newMapping[i][0]);
-        for(int j = 1;j <= newMapping[i][0]; j++){
-            printf("%5d ",newMapping[i][j]);
-        }
-        printf("\n");
-    }
+    // for(int i = 0; i < n; i++){
+    //     printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
+    // }
+    // for(int i = 0; i < newMappingRows; i++){
+    //     printf("%d | ",newMapping[i][0]);
+    //     for(int j = 1;j <= newMapping[i][0]; j++){
+    //         printf("%5d ",newMapping[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+    fprint_result(newMappingRows,newMapping,bucket_index,original_bucket,n);
     return newMapping;
+}
+
+void fprint_result(int newMappingRow,int **newMapping,char *** bucket_index,int **original_bucket,int n){
+    FILE * f_out = NULL;
+    f_out = fopen("hw5.out","w");
+    if(f_out){
+        fprintf(f_out,"%3d\n\n",newMappingRow);
+        for(int i = 0; i < n; i++){
+            fprintf(f_out,"%3s /",bucket_index[i][0]);
+            for(int j = 1; j <= original_bucket[i][0]; j++){
+                fprintf(f_out,"%3d",original_bucket[i][j]);
+            }
+            fprintf(f_out,"\n");
+        }
+        fprintf(f_out,"\n");
+        for(int i = 0; i < newMappingRow; i++){
+            fprintf(f_out,"%3d /",i);
+            for(int j = 1; j <= newMapping[i][0]; j++)
+                fprintf(f_out,"%3d",newMapping[i][j]);
+            fprintf(f_out,"\n");
+        }
+    }else{
+        printf("Cannot open hw5.out");
+        exit(0);
+    }
 }
 
 int main(int argc, char const *argv[])
@@ -120,6 +148,7 @@ int main(int argc, char const *argv[])
     int **bucket = (int **)malloc(n*sizeof(int *));
     int ** newMapping;
     int bucketAmountOfNewMapping;
+    char *** bucket_index;
     for(int i = 0; i < n; i++){
         amounts_of_elements = (rand() % m) + 1;
         // printf("amounts of elements = %d\n",amounts_of_elements);
