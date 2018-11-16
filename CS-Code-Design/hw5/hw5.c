@@ -1,17 +1,16 @@
+/************************************************************
+ * 學號：E64061151
+ * 姓名：林友鈞
+ * 編譯方式：gcc -std=c99 -o hw5 hw5.c
+ * 執行方式：./hw5 n m d s
+ * 程式功能：compress a random generating bucket
+ * 更新日期：2018/11/12
+ ************************************************************/
 #include<stdio.h>
 #include<stdlib.h>
 #define EOB -1
 
 void fprint_result(int newMappingRow,int **newMapping,char *** bucket_index,int **original_bucket,int n);
-
-int MaxAmountOfElementInBucket(int **original_bucket, int n){
-    int Max = 0;
-    for(int i = 0; i < n; i++){
-        if(original_bucket[i][0] > Max)
-            Max = original_bucket[i][0];
-    }
-    return Max;
-}
 
 void Zeroing(int *array,int size){
     for(int i = 0; i < size; i++) array[i] = 0;
@@ -21,13 +20,11 @@ int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,i
     int map_match[newMapping[0] + 1];
     int no_match[original_bucket[0]+1];
     int count = 0,i,j, result = 0;
-    printf("In Merge\n");
     Zeroing(no_match,original_bucket[0] + 1);
     Zeroing(map_match,newMapping[0] + 1);
     for(int i = 0; i < Max + 1; i++) bucket_index[i] = '0';// initialize the string;
     bucket_index[Max+1] = '\0'; // set the end of bucket_index, because bucket_index is string type data;
 
-    
     // search begin
     for(i = 1; i <= original_bucket[0]; i++){
         for(j = 1; j <= *newMapping0; j++){
@@ -64,19 +61,13 @@ int bucket_union(int newMappingRows,int *original_bucket,int ** newMapping,char 
         temp = Merge(original_bucket,newMapping[i],bucket_index[1],Max,&original_match);
         max_match = temp > max_match ? max_match_row = i,temp : max_match;
     }
-    printf("max_match = %d\n",max_match);
-    printf("max_match_row = %d\n",max_match_row);
-    printf("============================\n");
     return max_match == EOB ? max_match : max_match_row;
 }
 
 int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
     
     int newMappingRows = 0;
-    int successful = 0;
-    int count = 0;
-    int temp = 0,max_match,max_match_row;
-    int or_mapping;
+    int max_match,max_match_row;
     int i,j;
     char *** bucket_index = (char ***)malloc(n*sizeof(char **));
 	newMapping = malloc(102*sizeof(int **));
@@ -101,16 +92,6 @@ int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
             sprintf(bucket_index[i][0],"%d",max_match_row);
         }
     }
-    // for(int i = 0; i < n; i++){
-    //     printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
-    // }
-    // for(int i = 0; i < newMappingRows; i++){
-    //     printf("%d | ",newMapping[i][0]);
-    //     for(int j = 1;j <= newMapping[i][0]; j++){
-    //         printf("%5d ",newMapping[i][j]);
-    //     }
-    //     printf("\n");
-    // }
     fprint_result(newMappingRows,newMapping,bucket_index,original_bucket,n);
     return newMapping;
 }
@@ -147,25 +128,22 @@ int main(int argc, char const *argv[])
     int amounts_of_elements;
     int **bucket = (int **)malloc(n*sizeof(int *));
     int ** newMapping;
-    int bucketAmountOfNewMapping;
-    char *** bucket_index;
     for(int i = 0; i < n; i++){
         amounts_of_elements = (rand() % m) + 1;
-        // printf("amounts of elements = %d\n",amounts_of_elements);
         bucket[i] = (int *)malloc((amounts_of_elements + 1)*sizeof(int)); // malloc amount_of_element + 1 '1' is for first element
         bucket[i][0] = amounts_of_elements;
         for(int j = 1; j <= bucket[i][0]; j++){
             bucket[i][j] = rand()%d;
         }
     }
-    for(int i = 0; i < n; i++){
-        printf("%d | ",bucket[i][0]);
-        for(int j = 1;j <= bucket[i][0];j++){
-            printf("%5d",bucket[i][j]);
-        }
-        printf("\n");
-    }
-    bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
+    // for(int i = 0; i < n; i++){
+    //     printf("%d | ",bucket[i][0]);
+    //     for(int j = 1;j <= bucket[i][0];j++){
+    //         printf("%5d",bucket[i][j]);
+    //     }
+    //     printf("\n");
+    // }
+
     Compress(bucket,newMapping,n,m);
     return 0;
 }

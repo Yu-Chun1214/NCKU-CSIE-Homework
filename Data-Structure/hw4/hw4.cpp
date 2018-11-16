@@ -175,10 +175,7 @@ Mat Mat::operator*(Mat mat2){
 
 int main(){
     Mat mat(3,4,3);
-    // cout<<"===================\n";
-    // mat.mwrite();
     Mat mat2(2,4,4);
-    // cout<<"====================\n";
     mat2.Transpose().mwrite();
     cout<<"====================\n";
     (mat*mat2.Transpose()).mwrite();

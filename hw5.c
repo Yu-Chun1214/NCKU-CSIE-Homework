@@ -1,159 +1,132 @@
 #include<stdio.h>
+#include<string.h>
 #include<stdlib.h>
+#include<stdbool.h>
+#include<time.h>
 
-int MaxAmountOfElementInBucket(int **original_bucket, int n){
-    int Max = 0;
-    for(int i = 0; i < n; i++){
-        if(original_bucket[i][0] > Max)
-            Max = original_bucket[i][0];
+void swap(int *p1,int *p2){
+ int tmp=*p1;
+ *p1=*p2;
+ *p2=tmp;
+}
+int main(int argc,char *argv[]){
+ int n=atoi(argv[1]);
+ int m=atoi(argv[2]);
+ int d=atoi(argv[3]);
+ int s=atoi(argv[4]);
+ srand(s);
+
+ int origin[n][m];//={7,5,-1,-1,-1,7,6,1,6,-1,6,9,9,-1,-1,9,-1,-1,-1,-1,0,1,0,2,-1};     //起始bucket
+ int total[n];      //每行總元素數目
+ int final[n][m];     //結果bucket
+ int left[n];      //用於確認final每行都剩下多少位置可以放
+
+ bool list[n];
+ int correspond[n];     //用於確認有幾個已經被放入
+ int merges[n];      //用於排序merge
+ int order[n];      //用於紀錄merge多少之順序
+ bool check[n][m][1];
+ bool count[m][1];
+
+ for(int i=0;i<n;i++) for(int j=0;j<m;j++) {origin[i][j]=-1; final[i][j]=-2; check[i][j][0]=true;}//起始都先放-1 最終都先放-2 check拿來確認是否已經放入
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ for(int i=0;i<n;i++)//亂數產生origin
+ {
+  int k=(rand()%d)+1;
+  for(int j=0;j<k;j++)
+  {
+   origin[i][j]=(rand()%d);
+   printf("%d ",origin[i][j]);
+  }
+  printf("\n");
+ }
+ for(int i=0;i<n;i++)  
+  for(int j=0;j<m;j++)   
+  {
+   if(origin[i][j]==-1) {total[i]=j; break;}
+   if(origin[i][j]!=-1 && j==(m-1)) {total[i]=m; break;}
+  }
+ printf("\n");
+//-----------------------------------------------------------------------------------------------------------------------------
+ for(int i=0;i<n;i++) left[i]=m;
+ for(int i=0;i<n;i++) {correspond[i]=0; merges[i]=0; order[i]=-100;}
+ for(int i=0;i<m;i++) count[i][0]=true;
+//--------------------------------------------------------------------------------------------------------------------------------
+
+ for(int i=0;i<n;i++)    //origin的行數
+ {
+  for(int k=0;k<n;k++) list[k]=true;
+  for(int k=0;k<n;k++)   //final的行數 每到新的一行 計數歸0
+  {
+   correspond[k]=0;
+   merges[k]=0;
+
+   for(int l=0;l<m;l++) count[l][0]=true;//跑到final的新行就要先把所有恢復成true
+
+   for(int j=0;j<total[i];j++) //origin的欄號 用final去找原始
+   {
+    for(int l=0;l<m;l++) //final的欄號
+    {
+     if(count[l][0]==true) //如果是true代表還沒有放過
+      if(final[k][l]==origin[i][j])
+      {
+       correspond[k]++;
+       merges[k]++;
+       count[l][0]=false;
+       break;
+      }
+    }  
+   }   
+  }
+//------------------------------------------------------------------------------------------------------------------
+  for(int k=0;k<n;k++) if(merges[k]<merges[k+1]){swap(&merges[k],&merges[k+1]); k=0;}
+  for(int k=0;k<n;k++) 
+   for (int h=0;h<n;h++)
+    if(merges[k]==correspond[h]&&list[h]) {order[k]=h; list[h]=false; break;}
+//------------------------------------------------------------------------------------------------------------------
+  
+  for(int k=0;k<n;k++)
+  {
+   if(total[i]==correspond[order[k]])     break;
+
+   if(left[order[k]]>(total[i]-correspond[order[k]])||left[order[k]]==(total[i]-correspond[order[k]])) //確認能不能放入該列
+   { 
+    for(int j=0;j<total[i];j++)  //用final掃原始
+    {
+     for(int l=0;l<m;l++)
+     {
+      if(check[order[k]][l][0]==true)   //確認是否已經被讀進去過了
+      {
+       if(origin[i][j]==final[order[k]][l]) //如果一樣且沒有被讀過 就把它變成讀過
+       {
+        check[order[k]][l][0]=false;
+        break;
+       }
+       if(origin[i][j]!=final[order[k]][l])
+        if(final[order[k]][l]==-2)
+        {
+         final[order[k]][l]=origin[i][j];
+         check[order[k]][l][0]=false;
+         break; 
+        }
+      }
+     }
     }
-    return Max;
-}
-
-void Zeroing(int *array,int size){
-    for(int i = 0; i < size; i++) array[i] = 0;
-}
-
-int Merge(int * original_bucket, int * newMapping, char * bucket_index,int Max,int *newMapping0){
-    int map_match[newMapping[0] + 1];
-    int no_match[original_bucket[0]+1];
-    int count = 0,i,j, result = 0;
-    printf("In Merge\n");
-    Zeroing(no_match,original_bucket[0] + 1);
-    Zeroing(map_match,newMapping[0] + 1);
-    for(int i = 0; i < Max + 1; i++) bucket_index[i] = '0';// initialize the string;
-    bucket_index[Max+1] = '\0'; // set the end of bucket_index, because bucket_index is string type data;
-
-    
-    // search begin
-    for(i = 1; i <= original_bucket[0]; i++){
-        for(j = 1; j <= *newMapping0; j++){
-            if(!map_match[j] && newMapping[j] == original_bucket[i]){
-                map_match[j] = 1;
-                bucket_index[j] = '1';
-                ++result;
-                break;
-            }
-        }
-        if(j > *newMapping0){
-            no_match[count] = original_bucket[i];
-            ++count;          
-        }
+    left[order[k]]-=(total[i]-correspond[order[k]]);
+    break;
    }
-    
-    if(Max - *newMapping0 < count) return 0;
-    for(i = 0; i < count; i++){
-        newMapping[*newMapping0 + 1] = no_match[i];
-        bucket_index[*newMapping0 + 1] = '1';
-        (*newMapping0)++;
-    }
-
-    return result;
-}
-
-int ** Compress(int ** original_bucket, int ** newMapping, int n,int Max){
-    
-    int newMappingRows = 0;
-    int successful = 0;
-    int count = 0;
-    int temp = 0,max_match,max_match_row;
-    int or_mapping;
-    int i,j;
-    char *** bucket_index = (char ***)malloc(n*sizeof(char **));
-	newMapping = malloc(100*sizeof(int **));
-    for(int i = 0; i < n; i++){
-        bucket_index[i] = (char **)malloc(2*sizeof(char *));
-        bucket_index[i][0] = (char *)malloc(5*sizeof(char));
-        bucket_index[i][1] = (char *)malloc((Max + 2)*sizeof(char));
-    }
-    
-    for(i = 0; i < n; i++){
-        max_match = 0;
-        for(j = 0; j < newMappingRows; j++){
-            or_mapping = newMapping[j][0];
-            temp = Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&or_mapping);
-            max_match = (temp > max_match) ? max_match_row = j,temp : max_match; 
-        }
-        if(!max_match){
-            newMappingRows ++;
-            //newMapping = realloc(newMapping,(newMappingRows)*sizeof(int **));
-            newMapping[j] = (int *)malloc((Max + 1) * sizeof(int));
-            newMapping[j][0] = 0;
-            printf("j = %d\n",j);
-            Merge(original_bucket[i],newMapping[j],bucket_index[i][1],Max,&newMapping[j][0]);
-            sprintf(bucket_index[i][0],"%d",j);
-        }else{
-            Merge(original_bucket[i],newMapping[max_match_row],bucket_index[i][1],Max,&newMapping[max_match_row][0]);
-            sprintf(bucket_index[i][0],"%d",max_match_row);
-        }
-    }
-    for(int i = 0; i < n; i++){
-        printf("%s %s\n",bucket_index[i][0],bucket_index[i][1]);
-    }
-    for(int i = 0; i < newMappingRows; i++){
-        printf("%d | ",newMapping[i][0]);
-        for(int j = 1;j <= newMapping[i][0]; j++){
-            printf("%5d ",newMapping[i][j]);
-        }
-        printf("\n");
-    }
-    return newMapping;
-}
-
-int main(int argc, char const *argv[])
-{
-    int n = atoi(argv[1]),m = atoi(argv[2]),d = atoi(argv[3]), s = atoi(argv[4]);
-    srand(s);
-    int amounts_of_elements;
-    int **bucket = (int **)malloc(n*sizeof(int *));
-    int ** newMapping;
-    int bucketAmountOfNewMapping;
-    for(int i = 0; i < n; i++){
-        amounts_of_elements = (rand() % m) + 1;
-        // printf("amounts of elements = %d\n",amounts_of_elements);
-        bucket[i] = (int *)malloc((amounts_of_elements + 1)*sizeof(int)); // malloc amount_of_element + 1 '1' is for first element
-        bucket[i][0] = amounts_of_elements;
-        for(int j = 1; j <= bucket[i][0]; j++){
-            bucket[i][j] = rand()%d;
-        }
-    }
-
-    // {
-    //     bucket[0] = (int *)malloc(5 * sizeof(int));
-    //     bucket[0][0] = 3;bucket[0][1] = 2;bucket[0][2] = 3;bucket[0][3] = 5;bucket[0][4] = 7;
-
-    //     bucket[1] = (int *)malloc(5 * sizeof(int));
-    //     bucket[1][0] = 4;bucket[1][1] = 1;bucket[1][2] = 3;bucket[1][3] = 7;bucket[1][4] = 9;
-
-    //     bucket[2] = (int *)malloc(4 * sizeof(int));
-    //     bucket[2][0] = 2;bucket[2][1] = 3;bucket[2][2] = 1;bucket[2][3] = 8;
-
-    //     bucket[3] = (int *)malloc(6 * sizeof(int));
-    //     bucket[3][0] = 5;bucket[3][1] = 1;bucket[3][2] = 2;bucket[3][3] = 3; bucket[3][4] = 4; bucket[3][5] = 5;
-
-    //     bucket[4] = (int *)malloc(3 * sizeof(int));
-    //     bucket[4][0] = 2; bucket[4][1] = 2; bucket[4][2] = 7;
-
-    //     bucket[5] = (int *)malloc(3 * sizeof(int));
-    //     bucket[5][0] = 2; bucket[5][1] = 1; bucket[5][2] = 3; 
-
-    //     bucket[6] = (int *)malloc(2 * sizeof(int));
-    //     bucket[6][0] = 1; bucket[6][1] = 2;
-
-    //     bucket[7] = (int *)malloc(4 *sizeof(int));
-    //     bucket[7][0] = 3; bucket[7][1] = 1; bucket[7][2] = 5;bucket[7][3] = 6;
-
-    //     bucket[8] = (int *)malloc(4 *sizeof(int));
-    //     bucket[8][0] = 3; bucket[8][1] = 1; bucket[8][2] = 5; bucket[8][3] = 7;
-    // }
-    for(int i = 0; i < n; i++){
-        printf("%d | ",bucket[i][0]);
-        for(int j = 1;j <= bucket[i][0];j++){
-            printf("%5d",bucket[i][j]);
-        }
-        printf("\n");
-    }
-    //bucketAmountOfNewMapping = MaxAmountOfElementInBucket(bucket,n);
-    Compress(bucket,newMapping,n,m);
-    return 0;
+  } 
+  for(int k=0;k<n;k++) for(int l=0;l<m;l++) check[k][l][0]=true;
+  
+ }
+//-----------------------------------------------------------------------------------------------
+ for(int i=0;i<n;i++)
+ {
+  for(int j=0;j<m;j++)
+  {
+   if(final[i][j]!=-2) printf("%3d ",final[i][j]);
+  }
+  printf("\n");
+ }
+ return 0;
 }

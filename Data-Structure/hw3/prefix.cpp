@@ -14,17 +14,6 @@ public:
         }
         else throw "there has no elements in Stack object";
     }
-    // T pop_front(){
-    //     if(vector<T>::size() > 0){
-    //         T object = *(vector<T>::begin());
-    //         vector<T>::erase(vector<T>::begin());
-    //         return object;
-    //     }
-    //     else throw "there has no elements in deque object";
-    // }
-    // void push_front(T object){
-    //     vector<T>::insert(vector<T>::begin(),object);
-    // }
 };
 
 bool isNumeric(char * c_string){
@@ -49,7 +38,7 @@ public:
         Stack<string> return_op;
         string temp;
         for(Stack<string>::iterator dit = Stack<string>::end() - 1; dit != Stack<string>::begin() - 1; dit--){
-            if(Precedence(op) < Precedence(*dit) || Precedence(op) == Precedence(*dit)){
+            if(Precedence(op) <= Precedence(*dit)){
                 temp = *dit;
                 Stack<string>::erase(dit);
                 return_op.push_back(temp);

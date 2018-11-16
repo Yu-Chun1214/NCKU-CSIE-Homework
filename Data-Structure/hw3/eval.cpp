@@ -47,7 +47,7 @@ deque<string> InputInstructions(){
     return instructions;
 }
 
-double performace(string token, string num1,string num2){
+double performance(string token, string num1,string num2){
     string add("+"),subtract("-"),divide("/"),multi("*");
     double result;
     if(token == add)
@@ -66,7 +66,7 @@ int main(){
     do{      
         for(deque<string>::iterator dsit = input.begin(); dsit < input.end() - 2; dsit++){
             if(!isNumeric((char *)dsit->c_str()) && isNumeric((char *)(dsit + 1)->c_str()) && isNumeric((char *)(dsit + 2)->c_str())){
-                *dsit = to_string(performace(*dsit,*(dsit + 1),*(dsit + 2)));
+                *dsit = to_string(performance(*dsit,*(dsit + 1),*(dsit + 2)));
                 input.erase(dsit + 2);
                 input.erase(dsit + 1);
             }
