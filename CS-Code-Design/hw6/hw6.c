@@ -43,6 +43,7 @@ int main(int argc, char const *argv[])
 
     char **rule;
     struct sRule fw[6];
+    struct sRule sub_rule;
     rule = malloc(6 * sizeof(char *));
     for(int i = 0; i < 5; i++) rule[i] = malloc(25 * sizeof(char));
     rule[5] = (char *)malloc(40 * sizeof(char));
@@ -55,29 +56,32 @@ int main(int argc, char const *argv[])
         strcpy(do_not_care[1],"0.0.0.0/0");
         strcpy(do_not_care[2],"0 : 65535");
         strcpy(do_not_care[3],"0 : 65535");
-        strcpy(do_not_care[4],"0x11/0xFF");
+        strcpy(do_not_care[4],"0x00/0x00");
     }
     int dontcare_count[5] = {0,0,0,0,0};
 
     for(int i = 0; i < 6; i++) Constructor(&fw[i]);
-
+	int num = 0;
     while(EOF != fscanf(file,"%s %s %d : %d %d : %d %s",rule[0],rule[1],&f3[0],&f3[1],&f4[0],&f4[1],rule[4])){
-        printf("%s\n",rule[0]);
+        //printf("%s\n",rule[0]);
         sprintf(rule[2],"%d : %d",f3[0],f3[1]);
         sprintf(rule[3],"%d : %d",f4[0],f4[1]);
-        sprintf(rule[5],"%s %s %s",rule[2],rule[3],rule[4]);
+        sprintf(rule[5],"%s %s %s",rule[2],rule[3],rule[4]); // subrule
         for(int i = 0; i < 5; i++){
             ComputeRule(&fw[i],rule[i]);
             ComputeDontCare(rule[i],do_not_care[i],&dontcare_count[i]);
         }
         ComputeRule(&fw[5],rule[5]);
+		num++;
     }
-    for(int i = 0; i < 6; i++){
-        printf("size %d is %d\n",i,fw[i].size);
-    }
-
     for(int i = 0; i < 5; i++){
-        printf("* of fw%d is %d\n",i,dontcare_count[i]);
+        printf("F%d: %d\n",i+1,fw[i].size);
     }
+	printf("\n");
+    for(int i = 0; i < 5; i++){
+        printf("F%d: %d\n",i+1,dontcare_count[i]);
+    }
+	printf("total rules: %d\n",num);
+	printf("distinct rule: %d\n",fw[5].size);
     return 0;
 }
