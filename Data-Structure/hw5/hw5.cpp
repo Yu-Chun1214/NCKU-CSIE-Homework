@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <initializer_list>
 
 using namespace std;
 
@@ -30,6 +29,7 @@ public:
     bool IsEmpty();
     void Show();
     int pop_back();
+    Heap Delete(int(*method)(Heap &, int),int num);
     Heap To_Heap(int(*method)(Heap &, int));
     Heap reArrange(int(*method)(Heap &, int),int which, int num);
 };
@@ -55,6 +55,11 @@ int Heap::pop_back(){
     return num;
 }
 
+Heap Heap::Delete(int(*method)(Heap &, int),int num){
+    reArrange(method,num,pop_back());
+    return *this;
+}
+
 void Heap::Show(){
     for(int i = 1; i < vector<int>::size(); i++)
         cout<<(*this)[i]<<" ";
@@ -74,20 +79,24 @@ Heap Heap::To_Heap(int(*method)(Heap &, int)){
 
 Heap Heap::reArrange(int(*method)(Heap &, int),int which,int num){
     int pos,flag;
-    for(int i = 0; i < vector<int>::size();i++)
+    int i;
+    for(i = 0; i < vector<int>::size();i++)
         if((*this)[i] == which){
             pos = i;
             break;
         }
+    if(i == vector<int>::size()){
+        char * error_msg = (char *)malloc(100* sizeof(char));
+        sprintf(error_msg,"There has no element which value is %d store in heap object.\n",num);
+        throw error_msg;
+    }
+
     this->operator[](pos) = num;
     for(int i = pos; i > 0 && i < vector<int>::size();){
         flag = method(*this,i);
-        cout<<"flag = "<<flag<<endl;
-        cout<<"i = "<<i<<endl;
         if(flag == 1) i = 1;
         else if(flag / 2 == i){i = flag;}
         else i /= 2 ;
-        Show();
     }
 
     return *this;
@@ -98,18 +107,34 @@ int MaxHeapSwap(Heap &heap, int parent_pos){
     int swap_pos;
     if(parent_pos * 2 + 1 < heap.size()){
         temp = (heap[parent_pos * 2] > heap[parent_pos * 2 + 1] ? (swap_pos = parent_pos * 2,heap[parent_pos * 2]) : (swap_pos = parent_pos * 2 + 1,heap[parent_pos * 2 + 1]));
-        printf("Parent : %d\nChild1 : %d\nChild2 : %d\n",heap[parent_pos],heap[parent_pos * 2],heap[parent_pos * 2 + 1]);
     }
     else if (parent_pos * 2 < heap.size()){
         temp = heap[parent_pos * 2];
         swap_pos = parent_pos * 2;
-        printf("Parent : %d\nChild1 : %d\n",heap[parent_pos],heap[parent_pos * 2]);
     }
     else return false;
 
     if(temp > heap[parent_pos]){
         swap(heap[parent_pos],heap[swap_pos]);
-        cout<<"---------------------\n\n";
+        return swap_pos;
+    }
+    return false;
+}
+
+int minHeapSwap(Heap &heap, int parent_pos){
+    int temp;
+    int swap_pos;
+    if(parent_pos * 2 + 1 < heap.size()){
+        temp = (heap[parent_pos * 2] < heap[parent_pos * 2 + 1] ? (swap_pos = parent_pos * 2,heap[parent_pos * 2]) : (swap_pos = parent_pos * 2 + 1,heap[parent_pos * 2 + 1]));
+    }
+    else if (parent_pos * 2 < heap.size()){
+        temp = heap[parent_pos * 2];
+        swap_pos = parent_pos * 2;
+    }
+    else return false;
+
+    if(temp < heap[parent_pos]){
+        swap(heap[parent_pos],heap[swap_pos]);
         return swap_pos;
     }
     return false;
@@ -120,8 +145,6 @@ int main(){
     vector<int> nums = InputInstructions();
     Heap heap;
     heap.InputElements(nums);
-    // heap.Show();
-    heap.To_Heap(MaxHeapSwap);
-    printf("======================\n\n");
-    heap.reArrange(MaxHeapSwap,heap[3],60).Show();
+    heap.To_Heap(minHeapSwap).Show();
+    
 }
