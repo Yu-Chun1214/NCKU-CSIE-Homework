@@ -46,7 +46,7 @@ int Heap::pop_back(){
     if(!IsEmpty()) throw "Heap Is Empty";
     int num = *(vector<int>::end() - 1);
     vector<int>::pop_back();
-    return num;
+    return num;  
 }
 
 Heap Heap::Delete(int num){

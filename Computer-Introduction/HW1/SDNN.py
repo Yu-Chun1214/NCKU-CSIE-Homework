@@ -1,21 +1,17 @@
 import numpy
-import matplotlib.pyplot as plt
-import re
 
 def main():
     """
     main function
     """
-    with open('./peakposition.txt','r') as f:
+    with open('E64061151.2018-09-27-06-07-48.peakposition.txt','r') as f:
         text_list = f.readlines()
         data = dataProcess(text_list)
         interval = Interval(data)
-        interval *= 2
-        ans = numpy.std(interval)
-        f = numpy.fft.fft(interval)
-        plt.plot(f)
-        plt.show()
-        print(ans)
+        # ans = numpy.std(interval)
+        mean = numpy.mean(interval)
+        ans = numpy.sqrt(numpy.mean([(i - mean)**2 for i in interval]))
+        print("SDNN : ",ans)
 
 def dataProcess(text_list:list):
     """
