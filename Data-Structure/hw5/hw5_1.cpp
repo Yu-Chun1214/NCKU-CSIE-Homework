@@ -25,13 +25,12 @@ int main(){
     Heap heap;
     heap.InputElements(nums);
     heap.To_Heap(MaxHeapSwap);
-    cout<<"===========Replace arbitrary element==============\n";
+    // cout<<"===========Replace arbitrary element==============\n";
     int replace1,replace2;
     cin>>replace1>>replace2;
-    heap.reArrange(replace1,replace2).Show();
-    cout<<"===========Delete arbitrary element===============\n";
-    int del;
-    cin>>del;
-    heap.Delete(del).Show();
-
+    try{
+        heap.reArrange(replace1,replace2).Show();
+    }catch(char * e){
+        cout<<e<<endl;
+    }
 }
