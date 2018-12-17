@@ -8,7 +8,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h> // ref: http://pubs.opengroup.org/onlinepubs/009695399/basedefs/stdint.h.html
+// #include <stdint.h> // ref: http://pubs.opengroup.org/onlinepubs/009695399/basedefs/stdint.h.html
 
 int main(int argc,char *argv[])
 {

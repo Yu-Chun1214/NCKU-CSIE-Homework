@@ -1,3 +1,11 @@
+/************************************************************
+ * 學號：E64061151
+ * 姓名：林友鈞
+ * 編譯方式：gcc -std=c99 -o hw7 hw7.c
+ * 執行方式：./hw7 filename
+ * 程式功能：分析檔案裡的資料，以及parse packet fields.
+ * 更新日期：2018/12/17
+ ************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -12,11 +20,10 @@ void ANS_initialize(Ans * ans){
     ans->TCP_num = ans->UDP_num = ans->ICMP_num = 0;
 }
 
-void Skip(FILE * fp,int num){
-    fpos_t position;
-    fgetpos(fp,&position);
-    position += num;
-    fsetpos(fp,&position);
+void Skip(FILE * fp,unsigned int num){
+	char * skip = (char *)malloc(num * sizeof(char));
+	fread(skip,sizeof(char),num,fp);
+	free(skip);
 }
 
 void PrintMac(const char * option,unsigned char * data){
@@ -59,7 +66,7 @@ Ans * READING(FILE * fp){
         fread(data,sizeof(char),6,fp);
         PrintMac("DST MAC: ",data);
         fread(data,sizeof(char),6,fp);
-        PrintMac("Src MAC: ",data);
+        PrintMac("SRC MAC: ",data);
         fread(trash,sizeof(char),4,fp);
         fread(total_length,sizeof(char),2,fp);
         fread(trash,sizeof(char),5,fp);
@@ -75,10 +82,9 @@ Ans * READING(FILE * fp){
             PrintIP("SRC IP: ",SRC_IP);
             PrintIP("DST IP: ",DST_IP);
             fread(port,sizeof(char),2,fp);
-            printf("SRC PORT: %d\n",256*port[0]+port[1]);
-
+            printf("SRC Port: %d\n",256*port[0]+port[1]);
             fread(port,sizeof(char),2,fp);
-            printf("DST PORT: %d\n",256*port[0]+port[1]);
+            printf("DST Port: %d\n",256*port[0]+port[1]);
             packet_pos += 4;
             ans->TCP_num += 1;
         }
@@ -93,9 +99,9 @@ Ans * READING(FILE * fp){
             PrintIP("SRC IP: ",SRC_IP);
             PrintIP("DST IP: ",DST_IP);
             fread(port,sizeof(char),2,fp);
-            printf("SRC PORT: %d\n",256*port[0]+port[1]);
+            printf("SRC Port: %d\n",256*port[0]+port[1]);
             fread(port,sizeof(char),2,fp);
-            printf("DST PORT: %d\n",256*port[0]+port[1]);
+            printf("DST Port: %d\n",256*port[0]+port[1]);
             packet_pos += 4;
             ans->UDP_num += 1;
         }
