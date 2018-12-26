@@ -62,8 +62,8 @@ void * NodeIterator(void * node){
 
 void nodeInsertion(void * v_node1,void* v_node2){
     // Insertion((NodePointer)node1,(NodePointer)node2);
-    NodePointer node2 = v_node2;
-    NodePointer node1 = v_node1;
+    NodePointer node2 = (NodePointer)v_node2;
+    NodePointer node1 = (NodePointer)v_node1;
     NodePointer temp ;
     temp = node2->next;
     node2->next = node1->next;
@@ -95,6 +95,6 @@ int main(int argc,char const *argv[]){
     float time_1 = clock();
     quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
     float time_2 = clock();
-    // printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
-    Show(head);
+    printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
+    // Show(head);
 }

@@ -12,8 +12,11 @@ def check():
                 raise Exception('Wrong Result!')
         
 if __name__ == '__main__':
-    # rnd = random.randint(0,1000)
-    rnd = 100000
+    
+    # rnd = 100000
     os.system('icc -std=c99 hw8.c')
-    os.system('./a.out %d > result.txt' % rnd)
-    check()
+    for i in range(10000):
+        print(i)
+        rnd = random.randint(0,100000)
+        os.system('./a.out %d > result.txt' % rnd)
+        check()
