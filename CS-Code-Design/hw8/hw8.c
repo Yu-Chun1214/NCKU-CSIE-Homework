@@ -10,6 +10,10 @@ struct Node{
 
 typedef struct Node Node;
 
+int RandomInt(int m){
+    return (rand()%m);
+}
+
 NodePointer nodeConstructor(int num){
     NodePointer newNode = (NodePointer)malloc(sizeof(Node));
     newNode->val = num;
@@ -17,13 +21,13 @@ NodePointer nodeConstructor(int num){
     return newNode;
 }
 
-NodePointer createRandomList(int amounts){
+NodePointer createRandomList(int amounts,int m){
     if(amounts){
         NodePointer np;
         NodePointer iterator;
         iterator = np = nodeConstructor(-1);
         for(int i = 0; i < amounts; i++){
-            iterator->next = nodeConstructor(rand());
+            iterator->next = nodeConstructor(RandomInt(m));
             iterator = iterator->next;
         }
         return np;
@@ -34,7 +38,7 @@ NodePointer createRandomList(int amounts){
 void Show(NodePointer head){
     NodePointer iterator = head->next;
     while(iterator){
-        printf("%d ",iterator->val);
+        printf("%6d ",iterator->val);
         iterator = iterator->next;
     }
     printf("\n");
@@ -52,7 +56,7 @@ void Insertion(NodePointer node1, NodePointer node2) // node1->next will be inse
 }
 
 int NodeCmpr(void * v_node1, void * v_node2){
-    return ((NodePointer)v_node1)->next->val > ((NodePointer)v_node2)->val;
+    return ((NodePointer)v_node1)->next->val < ((NodePointer)v_node2)->val;
 }
 
 void * NodeIterator(void * node){
@@ -88,13 +92,38 @@ void quickSort(void * list,unsigned int size, int cmpr(void * , void *),void ope
     }else return;
 }
 
+void nodeQuickSort(NodePointer head,unsigned int size){
+    NodePointer pivot = head->next;
+    NodePointer iter = pivot;
+    NodePointer temp;
+    int new_size = 0;
+    if(size > 1){
+        for(int i = 0;i < size - 1; i++){
+            if(iter->next->val < pivot->val){
+                temp = head->next;
+                head->next = iter->next;
+                iter->next = head->next->next;
+                head->next->next = temp;
+                ++new_size;
+            }else iter = iter->next;
+        }
+        nodeQuickSort(head,new_size);
+        nodeQuickSort(pivot,size - 1 - new_size);
+    }
+}
+
 int main(int argc,char const *argv[]){
     int num = atoi(argv[1]);
-    NodePointer head = createRandomList(num);
+    srand(atoi(argv[3]));
+    NodePointer head = createRandomList(num,atoi(argv[2]));
     NodePointer test = head;
+    // printf("Original SLL:");
+    // Show(head);
     float time_1 = clock();
-    quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
+    // quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
+    nodeQuickSort(head,num);
     float time_2 = clock();
     printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
+    // printf("Sorted SLL:");
     // Show(head);
 }
