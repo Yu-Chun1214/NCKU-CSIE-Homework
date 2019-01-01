@@ -1,3 +1,11 @@
+/************************************************************
+ * 學號：E64061151
+ * 姓名：林友鈞
+ * 編譯方式：gcc -std=c99 -o hw8 hw8.c
+ * 執行方式：./hw8 n m s
+ * 程式功能：利用linked list做快速排序
+ * 更新日期：2019/1/1
+ ************************************************************/
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -38,21 +46,10 @@ NodePointer createRandomList(int amounts,int m){
 void Show(NodePointer head){
     NodePointer iterator = head->next;
     while(iterator){
-        printf("%6d ",iterator->val);
+        printf("%2d",iterator->val);
         iterator = iterator->next;
     }
     printf("\n");
-}
-
-void Insertion(NodePointer node1, NodePointer node2) // node1->next will be insert after node2
-{
-    // if(node1 == node2) return;
-    NodePointer temp = NULL;
-    if(node2->next)
-        temp = node2->next;
-    node2->next = node1->next;
-    node1->next = node2->next->next;
-    node2->next->next = temp;
 }
 
 int NodeCmpr(void * v_node1, void * v_node2){
@@ -65,7 +62,7 @@ void * NodeIterator(void * node){
 }
 
 void nodeInsertion(void * v_node1,void* v_node2){
-    // Insertion((NodePointer)node1,(NodePointer)node2);
+    // node1->next will be insert after node2
     NodePointer node2 = (NodePointer)v_node2;
     NodePointer node1 = (NodePointer)v_node1;
     NodePointer temp ;
@@ -92,38 +89,16 @@ void quickSort(void * list,unsigned int size, int cmpr(void * , void *),void ope
     }else return;
 }
 
-void nodeQuickSort(NodePointer head,unsigned int size){
-    NodePointer pivot = head->next;
-    NodePointer iter = pivot;
-    NodePointer temp;
-    int new_size = 0;
-    if(size > 1){
-        for(int i = 0;i < size - 1; i++){
-            if(iter->next->val < pivot->val){
-                temp = head->next;
-                head->next = iter->next;
-                iter->next = head->next->next;
-                head->next->next = temp;
-                ++new_size;
-            }else iter = iter->next;
-        }
-        nodeQuickSort(head,new_size);
-        nodeQuickSort(pivot,size - 1 - new_size);
-    }
-}
-
 int main(int argc,char const *argv[]){
     int num = atoi(argv[1]);
     srand(atoi(argv[3]));
     NodePointer head = createRandomList(num,atoi(argv[2]));
-    NodePointer test = head;
-    // printf("Original SLL:");
-    // Show(head);
+    printf("Original SLL:");
+    Show(head);
     float time_1 = clock();
-    // quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
-    nodeQuickSort(head,num);
+    quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
     float time_2 = clock();
-    printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
-    // printf("Sorted SLL:");
-    // Show(head);
+    // printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
+    printf("Sorted SLL:");
+    Show(head);
 }
