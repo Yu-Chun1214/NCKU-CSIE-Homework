@@ -26,8 +26,8 @@ const byte LED7[10] = {
   B11111000,// 9
 };
 
-SoftwareSerial PMS(2,3);
-SoftwareSerial BT(8,9);
+SoftwareSerial PMS(2,3);//Tx->2 Rx->3
+SoftwareSerial BT(8,9);// Tx->8 Rx->9
 
 void setup() {
   // put your setup code here, to run once:
@@ -35,16 +35,17 @@ void setup() {
   Serial.println("Set up");
   BT.begin(9600);
   PMS.begin(9600);
+
+  //7 segment LED setup
   pinMode(dataPin,OUTPUT);
   pinMode(switchPin,OUTPUT);
   pinMode(clockPin,OUTPUT);
-  pinMode(10,OUTPUT);
 }
+
 
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned char high;
-  digitalWrite(10,HIGH);
   while(PMS.available()){
     last_c = c;
     c = PMS.read();
@@ -58,6 +59,8 @@ void loop() {
       Serial.print("ug/m3");
       Serial.print("\n");
       BT.println(pmcf25);
+
+      // 7 segments LED
       digitalWrite(switchPin,LOW);
       shiftOut(dataPin,clockPin,MSBFIRST,LED7[pmcf25/10]);
       shiftOut(dataPin,clockPin,MSBFIRST,LED7[pmcf25%10]);
@@ -67,7 +70,7 @@ void loop() {
       pmat25 = 256 * high + c;
 //      Serial.print("atmosphere, PM25 = :");
 //      Serial.print(pmat25);
-//      Serial.print("ug/m3");
+//      Serial.print("ug/m3");            
 //      Serial.print("\n");
     }
     if(count < 100){

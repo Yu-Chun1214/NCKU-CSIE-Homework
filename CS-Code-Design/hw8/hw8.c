@@ -93,12 +93,12 @@ int main(int argc,char const *argv[]){
     int num = atoi(argv[1]);
     srand(atoi(argv[3]));
     NodePointer head = createRandomList(num,atoi(argv[2]));
-    printf("Original SLL:");
-    Show(head);
+   // printf("Original SLL:");
+   // Show(head);
     float time_1 = clock();
     quickSort(head,num,NodeCmpr,nodeInsertion,NodeIterator);
     float time_2 = clock();
-    // printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
-    printf("Sorted SLL:");
-    Show(head);
+     printf("time consume : %f\n",(time_2 - time_1)/CLOCKS_PER_SEC);
+    //printf("Sorted SLL:");
+    //Show(head);
 }
