@@ -2,7 +2,8 @@
     "files.associations": {
         "*.h": "objective-cpp",
         "ratio": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "vector": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

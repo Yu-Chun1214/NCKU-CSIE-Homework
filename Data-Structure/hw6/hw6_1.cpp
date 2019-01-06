@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <set>
 #define MAX_NUM 10000
 
 using namespace std;
