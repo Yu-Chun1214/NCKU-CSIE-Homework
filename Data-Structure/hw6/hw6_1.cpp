@@ -58,7 +58,6 @@ cEdge * cVertex::SelectEdge(){
     int min_index = 0;
     map<int, cEdge*>::iterator iter;
     for(iter = edges.begin(); iter != edges.end(); iter++){
-        iter->second->Show();
         if(iter->second->Weight() < min && iter->second->Selected <= 1){
             min = iter->second->Weight();
             min_index = iter->first;
@@ -134,7 +133,6 @@ int cEdge::Tail(){return VertexTail->Index();}
 bool cTree::MergeTree(cTree tree){
     map<int, cVertex * >::iterator iter;
     newEdge->Selected++;
-    cout<<"newEdge->Selected = "<<newEdge->Selected<<endl;
     for(iter = tree.vertices.begin(); iter != tree.vertices.end(); iter++)
         vertices[iter->first] = iter->second;
     if(tree.newEdge)
@@ -178,18 +176,10 @@ void MergeTree(vector<cTree> & trees){
     vector<cTree>::iterator treeIter;
     for(int i = 0; i < trees.size(); i++){
         do{
-            cout<<"Now Tree is"<<endl;
-            trees[i].Show();
             temp = trees[i].NewEdge();
-            cout<<"Tree's Selected new Edge"<<endl;
-            temp->Show();
             treeIter = SelectTree(trees,trees[i],*temp);
-            cout<<"Be Merged Tree"<<endl;
-            treeIter->Show();
             trees[i].MergeTree(*treeIter);
             trees.erase(treeIter);
-            system("pause");
-            cout<<"\n";
         }while(trees[i].NewEdge());
     }
 }
@@ -247,21 +237,12 @@ int main(){
 
     AddEdges(vertices,edges);
 
-    for(auto a : edges){
-        a.Show();
-    }
-
     while(trees.size() > 1){
         for(int i = 0; i < trees.size(); i++)
             trees[i].SelectEdge();
         MergeTree(trees);
-        cout<<"------------------"<<endl;
-        for(int i = 0; i < trees.size(); i++)
-            trees[i].Show();
-        cout<<"trees size is "<<trees.size()<<endl;
     }
-    cout<<"\n\n\n"<<endl;
-    trees[0].Show();
+
     cout<<"\n\n\n"<<endl;
     for(vector<cEdge>::iterator it = edges.begin(); it!= edges.end(); it++){
         if(it->Selected) //it->Show();
