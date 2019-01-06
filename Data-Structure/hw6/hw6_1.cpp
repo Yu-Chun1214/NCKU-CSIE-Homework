@@ -58,11 +58,13 @@ cEdge * cVertex::SelectEdge(){
     int min_index = 0;
     map<int, cEdge*>::iterator iter;
     for(iter = edges.begin(); iter != edges.end(); iter++){
+        iter->second->Show();
         if(iter->second->Weight() < min && iter->second->Selected <= 1){
             min = iter->second->Weight();
             min_index = iter->first;
         }
     }
+    
     return edges[min_index];
 }
 
@@ -95,11 +97,13 @@ void cTree::Show(){
 void cTree::SelectEdge(){
     map<int, cVertex *>::iterator iter;
     cEdge * minEdge;
+    cEdge * temp;
     int minCost = MAX_NUM;
     for(iter = vertices.begin(); iter != vertices.end(); iter++){
-        if(iter->second->SelectEdge()->Weight() < minCost){
-            minCost = iter->second->SelectEdge()->Weight();
-            minEdge = iter->second->SelectEdge();
+        temp = iter->second->SelectEdge();
+        if(temp->Weight() < minCost && temp->Selected <= 1){
+            minCost = temp->Weight();
+            minEdge = temp;
         }
     }
     newEdge = minEdge;
@@ -120,7 +124,7 @@ bool cTree::IsInTree(int index){
 }
 
 void cEdge::Show(){
-    printf("<%d , %d> weight = %d  Selected = %s\n",VertexHead->Index(),VertexTail->Index(),weight,Selected ? "True" : "False");
+    printf("<%d , %d> weight = %d  Selected = %d\n",VertexHead->Index(),VertexTail->Index(),weight,Selected /*? "True" : "False"*/);
 }
 
 int cEdge::Head(){return VertexHead->Index();}
@@ -129,23 +133,28 @@ int cEdge::Tail(){return VertexTail->Index();}
 
 bool cTree::MergeTree(cTree tree){
     map<int, cVertex * >::iterator iter;
+    newEdge->Selected++;
+    cout<<"newEdge->Selected = "<<newEdge->Selected<<endl;
     for(iter = tree.vertices.begin(); iter != tree.vertices.end(); iter++)
         vertices[iter->first] = iter->second;
     if(tree.newEdge)
-    try{
-        vertices.at(tree.newEdge->Tail());
-        newEdge = NULL;
         try{
-            vertices.at(tree.newEdge->Head());
+            vertices.at(tree.newEdge->Tail());
             newEdge = NULL;
-            return false;
+            try{
+                vertices.at(tree.newEdge->Head());
+                newEdge = NULL;
+                return false;
+            }catch(out_of_range){
+                newEdge = tree.newEdge;
+            }
         }catch(out_of_range){
             newEdge = tree.newEdge;
         }
-    }catch(out_of_range){
-        newEdge = tree.newEdge;
+    else{
+        newEdge = NULL;
+        return false;
     }
-    else newEdge = NULL;
     return true;
 }
 
@@ -153,7 +162,7 @@ cEdge::cEdge(cVertex * V1, cVertex * V2, int W){
     VertexHead = V1; 
     VertexTail = V2; 
     weight = W;
-    Selected = false;
+    Selected = 0;
 }
 
 vector<cTree>::iterator SelectTree(vector<cTree> & trees,cTree tree, cEdge edge){
@@ -168,10 +177,20 @@ void MergeTree(vector<cTree> & trees){
     cEdge * temp;
     vector<cTree>::iterator treeIter;
     for(int i = 0; i < trees.size(); i++){
-        temp = trees[i].NewEdge();
-        treeIter = SelectTree(trees,trees[i],*temp);
-        if(trees[i].MergeTree(*treeIter)) {i--;}
-        trees.erase(treeIter);
+        do{
+            cout<<"Now Tree is"<<endl;
+            trees[i].Show();
+            temp = trees[i].NewEdge();
+            cout<<"Tree's Selected new Edge"<<endl;
+            temp->Show();
+            treeIter = SelectTree(trees,trees[i],*temp);
+            cout<<"Be Merged Tree"<<endl;
+            treeIter->Show();
+            trees[i].MergeTree(*treeIter);
+            trees.erase(treeIter);
+            system("pause");
+            cout<<"\n";
+        }while(trees[i].NewEdge());
     }
 }
 
@@ -228,12 +247,21 @@ int main(){
 
     AddEdges(vertices,edges);
 
+    for(auto a : edges){
+        a.Show();
+    }
+
     while(trees.size() > 1){
         for(int i = 0; i < trees.size(); i++)
             trees[i].SelectEdge();
         MergeTree(trees);
+        cout<<"------------------"<<endl;
+        for(int i = 0; i < trees.size(); i++)
+            trees[i].Show();
+        cout<<"trees size is "<<trees.size()<<endl;
     }
-
+    cout<<"\n\n\n"<<endl;
+    trees[0].Show();
     cout<<"\n\n\n"<<endl;
     for(vector<cEdge>::iterator it = edges.begin(); it!= edges.end(); it++){
         if(it->Selected) //it->Show();
