@@ -85,6 +85,7 @@ public:
     bool MergeTree(cTree tree);
     bool IsInTree(int index);
     cEdge * NewEdge(){return newEdge;}
+    cTree(){newEdge = NULL;}
 };
 
 void cTree::Show(){
