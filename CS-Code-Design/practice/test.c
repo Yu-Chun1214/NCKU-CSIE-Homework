@@ -31,14 +31,24 @@ int main(int argc, char const *argv[])
     short int a[5];
     ipv6 ips[10];
     int i = 0;
-    while(EOF != fscanf(file,"%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x/%2d",&ips[i].ip[0],&ips[i].ip[1],&ips[i].ip[2],&ips[i].ip[3],&ips[i].ip[4],&ips[i].ip[5],&ips[i].ip[6],&ips[i].ip[7],&ips[i].ip[8],&ips[i].ip[9],&ips[i].ip[10],&ips[i].ip[11],&ips[i].ip[12],&ips[i].ip[13],&ips[i].ip[14],&ips[i].ip[15],&ips[i].length)){
-        // fscanf(file,"%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x/%2d",&ips[i].ip[0],&ips[i].ip[1],&ips[i].ip[2],&ips[i].ip[3],&ips[i].ip[4],&ips[i].ip[5],&ips[i].ip[6],&ips[i].ip[7],&ips[i].ip[8],&ips[i].ip[9],&ips[i].ip[10],&ips[i].ip[11],&ips[i].ip[12],&ips[i].ip[13],&ips[i].ip[14],&ips[i].ip[15],&ips[i].length);
-        printf("%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x/%02d\n",ips[i].ip[0],ips[i].ip[1],ips[i].ip[2],ips[i].ip[3],ips[i].ip[4],ips[i].ip[5],ips[i].ip[6],ips[i].ip[7],ips[i].ip[8],ips[i].ip[9],ips[i].ip[10],ips[i].ip[11],ips[i].ip[12],ips[i].ip[13],ips[i].ip[14],ips[i].ip[15],ips[i].length);
+    int isEOF = 0;
+    // while(EOF != fscanf(file,"%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x/%2d",&ips[i].ip[0],&ips[i].ip[1],&ips[i].ip[2],&ips[i].ip[3],&ips[i].ip[4],&ips[i].ip[5],&ips[i].ip[6],&ips[i].ip[7],&ips[i].ip[8],&ips[i].ip[9],&ips[i].ip[10],&ips[i].ip[11],&ips[i].ip[12],&ips[i].ip[13],&ips[i].ip[14],&ips[i].ip[15],&ips[i].length)){
+    //     // fscanf(file,"%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x:%2x%2x/%2d",&ips[i].ip[0],&ips[i].ip[1],&ips[i].ip[2],&ips[i].ip[3],&ips[i].ip[4],&ips[i].ip[5],&ips[i].ip[6],&ips[i].ip[7],&ips[i].ip[8],&ips[i].ip[9],&ips[i].ip[10],&ips[i].ip[11],&ips[i].ip[12],&ips[i].ip[13],&ips[i].ip[14],&ips[i].ip[15],&ips[i].length);
+    //     printf("%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x:%02x%02x/%02d\n",ips[i].ip[0],ips[i].ip[1],ips[i].ip[2],ips[i].ip[3],ips[i].ip[4],ips[i].ip[5],ips[i].ip[6],ips[i].ip[7],ips[i].ip[8],ips[i].ip[9],ips[i].ip[10],ips[i].ip[11],ips[i].ip[12],ips[i].ip[13],ips[i].ip[14],ips[i].ip[15],ips[i].length);
+    //     i++;
+    // }
+    int j = 0;
+    while(EOF != isEOF){
+        j = 0;
+        for(int k = 0; k < 7; k++){
+            isEOF = fscanf(file,"%2x%2x:",&ips[i].ip[j],&ips[i].ip[j + 1]);
+            j+=2;
+        }
+        isEOF = fscanf(file,"%2x%2x/%2d",&ips[i].ip[14],&ips[i].ip[15],&ips[i].length);
         i++;
-        
     }
-    int count = i;
-    // printf("%s\n",OutputBitPattern(&ips[0].ip[0],8));
+
+    int count = i - 1;
     for(i = 0; i < count; i++){
         printf("%s%s:",OutputBitPattern(&(ips[i].ip[0]),8),OutputBitPattern(&(ips[i].ip[1]),8));
         for(int j = 2; j < 16; j+=2){
