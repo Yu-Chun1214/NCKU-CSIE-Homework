@@ -1,3 +1,5 @@
+#ifndef __BIGNUM_HPP__
+#define __BIGNUM_HPP__
 #include <iostream>
 #include <string>
 #include <vector>
@@ -117,12 +119,4 @@ Bignum Bignum::operator+(Bignum n2){
 }
 
 
-int main(int argc, char * argv[]){
-    Bignum n1(argv[1]);
-    Bignum n2(argv[3]);
-    Bignum n3 = n1 + n2;
-
-    // cout<<"n1.length = "<<n1.length()<<endl;
-    // cout<<"n2.length = "<<n2.length()<<endl;
-    cout<<n3<<endl;
-}
+#endif
