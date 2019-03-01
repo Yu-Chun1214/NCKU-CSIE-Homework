@@ -1,6 +1,6 @@
 # README of bignum.hpp
 
-> This module performs the addition operation of big number. If you want to develop other operation , please sent the pull request to me. THANKS.
+> This module performs the addition operation of big number. If you want to develop other operation , please sent the pull request to me. THANKS.
 
 ## Usage
 
